@@ -1,0 +1,30 @@
+{
+  "step": {
+    "id": "s8",
+    "action": "click",
+    "frame": "main",
+    "locators": [
+      {
+        "by": "role",
+        "name": null,
+        "role": "button",
+        "accessible_name": "SUBMIT OPEN",
+        "text": null
+      },
+      {
+        "by": "text",
+        "name": null,
+        "role": null,
+        "accessible_name": null,
+        "text": "SUBMIT OPEN"
+      }
+    ],
+    "value_from": null,
+    "literal": "",
+    "key": "optional",
+    "wait_ms": null,
+    "notes": "I need to submit the form to open the sub-account."
+  },
+  "url": "http://127.0.0.1:7878/console",
+  "screen": "\nFUNCTIONS\nMember Inquiry\nOpen Sub-Account\nBatch Reports\nWire Transfer\nReset Training Data\nLog Off\n\nPF5 Inquire\nPF9 Open\nClear Logoff\nHORIZON CU \u00a0 MEMBER SERVICING \u00a0 HCU-CICS2/PROD2 \u00a0 OP TELLER01 \u00a0 MEM -----\nSUB-ACCOUNT OPENED\n\n\nMEMBER\t10001 ROBERT M CHEN\nNEW ACCT\t80-10001-03\nPRODUCT\tREGULAR SHARE / SAVINGS\nOPENING BAL\t25.00\nSAVINGS BAL\t1,200.00\nCONFIRMATION\tCUS-44191\n\nHOST PRINT PREVIEW\n\n\nNew inquiry\nHCU SPOOL  HCU-CICS2  CONF CUS-44191  MEM 10001  NEW 80-10001-03  SAVINGS  BAL 25.00"
+}

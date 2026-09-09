@@ -1,0 +1,26 @@
+{
+  "observation": "{\n  \"step\": 9,\n  \"goal\": \"Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.\",\n  \"url\": \"http://127.0.0.1:7878/console\",\n  \"title\": \"HCU Member Servicing\",\n  \"secrets_available\": [\n    \"operator_id\",\n    \"password\"\n  ],\n  \"frames\": [\n    {\n      \"name\": \"root\",\n      \"url\": \"http://127.0.0.1:7878/console\",\n      \"controls\": [],\n      \"aria\": \"\",\n      \"text\": \"\"\n    },\n    {\n      \"name\": \"menu\",\n      \"url\": \"http://127.0.0.1:7878/frame/menu\",\n      \"controls\": [\n        {\n          \"tag\": \"a\",\n          \"type\": \"\",\n          \"name\": \"\",\n          \"value\": \"\",\n          \"text\": \"Member Inquiry\"\n        },\n        {\n          \"tag\": \"a\",\n          \"type\": \"\",\n          \"name\": \"\",\n          \"value\": \"\",\n          \"text\": \"Open Sub-Account\"\n        },\n        {\n          \"tag\": \"a\",\n          \"type\": \"\",\n          \"name\": \"\",\n          \"value\": \"\",\n          \"text\": \"Batch Reports\"\n        },\n        {\n          \"tag\": \"a\",\n          \"type\": \"\",\n          \"name\": \"\",\n          \"value\": \"\",\n          \"text\": \"Wire Transfer\"\n        },\n        {\n          \"tag\": \"a\",\n          \"type\": \"\",\n          \"name\": \"\",\n          \"value\": \"\",\n          \"text\": \"Reset Training Data\"\n        },\n        {\n          \"tag\": \"a\",\n          \"type\": \"\",\n          \"name\": \"\",\n          \"value\": \"\",\n          \"text\": \"Log Off\"\n        }\n      ],\n      \"aria\": \"- text: FUNCTIONS\\n- link \\\"Member Inquiry\\\":\\n  - /url: /inquiry\\n- link \\\"Open Sub-Account\\\":\\n  - /url: /open\\n- link \\\"Batch Reports\\\":\\n  - /url: /inquiry\\n- link \\\"Wire Transfer\\\":\\n  - /url: /inquiry\\n- link \\\"Reset Training Data\\\":\\n  - /url: /training/reset\\n- link \\\"Log Off\\\":\\n  - /url: /logout\\n- paragraph: PF5 Inquire PF9 Open Clear Logoff\",\n      \"text\": \"FUNCTIONS\\nMember Inquiry\\nOpen Sub-Account\\nBatch Reports\\nWire Transfer\\nReset Training Data\\nLog Off\\n\\nPF5 Inquire\\nPF9 Open\\nClear Logoff\"\n    },\n    {\n      \"name\": \"banner\",\n      \"url\": \"http://127.0.0.1:7878/frame/banner\",\n      \"controls\": [],\n      \"aria\": \"- table:\\n  - rowgroup:\\n    - row \\\"HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM -----\\\":\\n      - cell \\\"HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM -----\\\"\",\n      \"text\": \"HORIZON CU \\u00a0 MEMBER SERVICING \\u00a0 HCU-CICS2/PROD2 \\u00a0 OP TELLER01 \\u00a0 MEM -----\"\n    },\n    {\n      \"name\": \"main\",\n      \"url\": \"http://127.0.0.1:7878/open\",\n      \"controls\": [\n        {\n          \"tag\": \"a\",\n          \"type\": \"\",\n          \"name\": \"\",\n          \"value\": \"\",\n          \"text\": \"New inquiry\"\n        }\n      ],\n      \"aria\": \"- text: SUB-ACCOUNT OPENED\\n- table:\\n  - rowgroup:\\n    - row \\\"MEMBER 12345 JANE A OKONKWO\\\":\\n      - cell \\\"MEMBER\\\"\\n      - cell \\\"12345 JANE A OKONKWO\\\"\\n    - row \\\"NEW ACCT 80-12345-03\\\":\\n      - cell \\\"NEW ACCT\\\"\\n      - cell \\\"80-12345-03\\\"\\n    - row \\\"PRODUCT REGULAR SHARE / SAVINGS\\\":\\n      - cell \\\"PRODUCT\\\"\\n      - cell \\\"REGULAR SHARE / SAVINGS\\\"\\n    - row \\\"OPENING BAL 25.00\\\":\\n      - cell \\\"OPENING BAL\\\"\\n      - cell \\\"25.00\\\"\\n    - row \\\"SAVINGS BAL 4,250.18\\\":\\n      - cell \\\"SAVINGS BAL\\\"\\n      - cell \\\"4,250.18\\\"\\n    - row \\\"CONFIRMATION CUS-44191\\\":\\n      - cell \\\"CONFIRMATION\\\"\\n      - cell \\\"CUS-44191\\\"\\n- text: HOST PRINT PREVIEW\\n- iframe\\n- link \\\"New inquiry\\\":\\n  - /url: /inquiry\",\n      \"text\": \"SUB-ACCOUNT OPENED\\n\\n\\nMEMBER\\t12345 JANE A OKONKWO\\nNEW ACCT\\t80-12345-03\\nPRODUCT\\tREGULAR SHARE / SAVINGS\\nOPENING BAL\\t25.00\\nSAVINGS BAL\\t4,250.18\\nCONFIRMATION\\tCUS-44191\\n\\nHOST PRINT PREVIEW\\n\\n\\nNew inquiry\"\n    },\n    {\n      \"name\": \"spool\",\n      \"url\": \"http://127.0.0.1:7878/print/spool?t=HCU%20SPOOL%20%20HCU-CICS2%20%20CONF%20CUS-44191%20%20MEM%2012345%20%20NEW%2080-12345-03%20%20SAVINGS%20%20BAL%2025.00\",\n      \"controls\": [],\n      \"aria\": \"- text: HCU SPOOL HCU-CICS2 CONF CUS-44191 MEM 12345 NEW 80-12345-03 SAVINGS BAL 25.00\",\n      \"text\": \"HCU SPOOL  HCU-CICS2  CONF CUS-44191  MEM 12345  NEW 80-12345-03  SAVINGS  BAL 25.00\"\n    }\n  ]\n}",
+  "action": {
+    "thought": "The sub-account has been successfully opened. I will gather the required information.",
+    "action": "done",
+    "frame": "main",
+    "role": "optional",
+    "name": "",
+    "field_name": "",
+    "text": "",
+    "key": "optional",
+    "secret": "[redacted]",
+    "bind": null,
+    "wait_ms": 400,
+    "outputs": {
+      "member_name": "JANE A OKONKWO",
+      "savings_balance": "4,250.18",
+      "new_account_number": "80-12345-03",
+      "confirmation_code": "CUS-44191"
+    },
+    "checkpoint": [
+      "SUB-ACCOUNT OPENED"
+    ],
+    "error": ""
+  }
+}

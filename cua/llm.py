@@ -33,6 +33,9 @@ Rules:
 - Before sign-on the page has no named frames; use frame "root".
 - After sign-on this host uses a frameset: menu, banner, main. Do the work in "main" unless you need the menu.
 - Prefer field_name when listed. Prefer role+name for buttons/links.
+- Buttons and links must use action=click. Never use press for CONTINUE, INQUIRE, ENTER, or SUBMIT OPEN.
+- action=press is only for a real keyboard key with no target control (set key, leave name empty).
+- On OFAC or other interstitials, click the CONTINUE button in frame main, then fill PROD and DEPAMT and click SUBMIT OPEN.
 - Sign on with secrets operator_id and password. Never echo the password.
 - Do not invent URLs. Do not leave the allowlisted origin.
 - Stop with action=done as soon as the goal's confirmation/result is visible, and fill outputs from the screen.

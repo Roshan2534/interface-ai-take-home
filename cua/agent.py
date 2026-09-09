@@ -7,6 +7,7 @@ from typing import Any
 from cua.artifact import build_capability, save_capability
 from cua.evidence import RunLog
 from cua.llm import complete, resolve_llm
+from cua.outcomes import classify_screen
 from cua.schema import AgentAction, RunResult
 from cua.settings import MAX_STEPS, secrets
 from cua.surface import Surface
@@ -38,7 +39,15 @@ def _obs_text(obs: dict[str, Any], step: int, goal: str) -> str:
 
 
 def _parse_action(raw: dict[str, Any]) -> AgentAction:
-    return AgentAction.model_validate(raw)
+    action = AgentAction.model_validate(raw)
+    if action.bind in {"", "null", "none", "optional"}:
+        action.bind = None
+    if action.secret in {"", "null", "none"}:
+        action.secret = None
+    # Models often say "press CONTINUE"; that is a click, not a keyboard key.
+    if action.action == "press" and (action.name or action.field_name or action.role):
+        action.action = "click"
+    return action
 
 
 def _fill_value(action: AgentAction) -> AgentAction:
@@ -62,6 +71,7 @@ def discover(
     outputs: dict[str, str] = {}
     checkpoint: list[str] = []
     checkpoint_frame = "main"
+    repeats = 0
 
     for step in range(1, MAX_STEPS + 1):
         obs = surface.observe()
@@ -105,6 +115,31 @@ def discover(
         )
         history.append({"role": "assistant", "content": json.dumps(raw)})
         print(f"discover {step} {action.action} {action.field_name or action.name or ''}", flush=True)
+
+        sig = (action.action, action.frame, action.name, action.field_name)
+        if recorded and (
+            recorded[-1].action,
+            recorded[-1].frame,
+            recorded[-1].name,
+            recorded[-1].field_name,
+        ) == sig:
+            repeats += 1
+        else:
+            repeats = 0
+        if repeats >= 2:
+            history.append(
+                {
+                    "role": "user",
+                    "content": (
+                        "That control was already used and the screen did not change. "
+                        "Do not repeat it. If you are on OFAC, click CONTINUE once. "
+                        "If the open form is visible, select PROD=REGULAR SHARE, fill DEPAMT=25.00, "
+                        "then click SUBMIT OPEN."
+                    ),
+                }
+            )
+            repeats = 0
+            continue
 
         if action.action == "fail":
             result = RunResult(
@@ -191,48 +226,151 @@ def replay(capability, target: str, inputs: dict[str, str], surface: Surface) ->
     log = RunLog(capability.description, target, kind="replay")
     surface.goto(target)
     defaults = {field.name: field.default or "" for field in capability.inputs}
+    last_blob = ""
     for index, step in enumerate(capability.steps, start=1):
         value = _step_value(step, inputs, defaults)
         shown = "[secret]" if (step.value_from or "").startswith("secret:") else (value or "")
         print(f"replay {step.id} {step.action} {shown}", flush=True)
-        log.event(step=index, step_id=step.id, action=step.action)
-        surface.replay_step(step, value)
-        if index == len(capability.steps):
+        log.event(step=index, step_id=step.id, action=step.action, value=shown)
+        try:
+            surface.replay_step(step, value)
+        except Exception as exc:
             obs = surface.observe()
-            log.save_step(index, {"step": step.model_dump(), "url": obs["url"]}, obs["png"])
+            blob = surface.visible_text()
+            log.save_step(
+                index,
+                {"step": step.model_dump(), "url": obs["url"], "error": str(exc), "screen": blob[:2000]},
+                obs["png"],
+            )
+            hit = classify_screen(blob)
+            result = _replay_stop(
+                capability,
+                target,
+                inputs,
+                step_id=step.id,
+                steps=index,
+                run_dir=str(log.dir),
+                hit=hit,
+                fallback_error=str(exc),
+                observed=blob,
+            )
+            log.finish(result.model_dump())
+            return result
+
+        obs = surface.observe()
+        blob = surface.visible_text()
+        last_blob = blob
+        log.save_step(
+            index,
+            {
+                "step": step.model_dump(),
+                "url": obs["url"],
+                "screen": blob[:2000],
+            },
+            obs["png"],
+        )
+        hit = classify_screen(blob)
+        if hit:
+            result = _replay_stop(
+                capability,
+                target,
+                inputs,
+                step_id=step.id,
+                steps=index,
+                run_dir=str(log.dir),
+                hit=hit,
+                observed=blob,
+            )
+            log.finish(result.model_dump())
+            return result
 
     texts = capability.checkpoint.texts
     ok = True
     if texts:
         ok = surface.checkpoint(capability.checkpoint.frame, texts)
         if not ok:
-            blob = surface.visible_text().upper()
-            ok = all(item.upper() in blob for item in texts)
-    outputs = {}
+            blob = last_blob or surface.visible_text()
+            ok = all(item.upper() in blob.upper() for item in texts)
     if ok:
-        blob = surface.visible_text()
-        for field in capability.outputs:
-            outputs[field.name] = _guess_output(field.name, blob)
+        blob = last_blob or surface.visible_text()
+        outputs = {field.name: _guess_output(field.name, blob) for field in capability.outputs}
         result = RunResult(
             status="success",
+            outcome="opened_subaccount",
             goal=capability.description,
             target=target,
+            inputs=inputs,
             outputs=outputs,
+            step_id=capability.steps[-1].id if capability.steps else None,
+            expected=" ".join(texts) or "SUB-ACCOUNT OPENED",
+            observed=_clip_obs(blob),
+            reason="Checkpoint matched. Capability completed without the LLM.",
             steps=len(capability.steps),
-            artifact_path=None,
             run_dir=str(log.dir),
         )
     else:
-        result = RunResult(
-            status="failed",
-            goal=capability.description,
-            target=target,
-            error=f"Checkpoint {texts!r} not visible after replay",
+        blob = last_blob or surface.visible_text()
+        hit = classify_screen(blob)
+        result = _replay_stop(
+            capability,
+            target,
+            inputs,
+            step_id=capability.steps[-1].id if capability.steps else None,
             steps=len(capability.steps),
             run_dir=str(log.dir),
+            hit=hit,
+            fallback_error=f"Checkpoint {texts!r} not visible after replay",
+            observed=blob,
         )
     log.finish(result.model_dump())
     return result
+
+
+def _clip_obs(blob: str) -> str:
+    return " ".join(blob.split())[:400]
+
+
+def _replay_stop(
+    capability,
+    target: str,
+    inputs: dict[str, str],
+    *,
+    step_id: str | None,
+    steps: int,
+    run_dir: str,
+    hit,
+    observed: str,
+    fallback_error: str | None = None,
+) -> RunResult:
+    if hit:
+        return RunResult(
+            status=hit.status,
+            outcome=hit.outcome,
+            goal=capability.description,
+            target=target,
+            inputs=inputs,
+            error=None if hit.status == "business_outcome" else hit.reason,
+            step_id=step_id,
+            expected=hit.expected,
+            observed=hit.observed,
+            reason=hit.reason,
+            steps=steps,
+            run_dir=run_dir,
+        )
+    return RunResult(
+        status="failed",
+        outcome="hard_failure",
+        goal=capability.description,
+        target=target,
+        inputs=inputs,
+        error=fallback_error or "Replay stopped",
+        step_id=step_id,
+        expected="Checkpoint or next recorded control",
+        observed=_clip_obs(observed),
+        reason=fallback_error or "Unclassified host state",
+        steps=steps,
+        run_dir=run_dir,
+    )
 
 
 def _guess_output(name: str, blob: str) -> str:

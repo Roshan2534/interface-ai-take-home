@@ -74,11 +74,17 @@ class AgentAction(BaseModel):
 
 
 class RunResult(BaseModel):
-    status: Literal["success", "failed"]
+    status: Literal["success", "business_outcome", "failed"]
+    outcome: str | None = None
     goal: str
     target: str
+    inputs: dict[str, Any] = Field(default_factory=dict)
     outputs: dict[str, Any] = Field(default_factory=dict)
     error: str | None = None
+    step_id: str | None = None
+    expected: str | None = None
+    observed: str | None = None
+    reason: str | None = None
     steps: int = 0
     artifact_path: str | None = None
     run_dir: str | None = None

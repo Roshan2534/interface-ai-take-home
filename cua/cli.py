@@ -59,7 +59,7 @@ def _run(args: argparse.Namespace) -> int:
             capability = load_capability(Path(args.artifact))
             result = replay(capability, args.target, dict(args.input or []), surface)
         print(json.dumps(result.model_dump(), indent=2))
-        return 0 if result.status == "success" else 1
+        return 0 if result.status in {"success", "business_outcome"} else 1
     finally:
         if browser:
             browser.close()

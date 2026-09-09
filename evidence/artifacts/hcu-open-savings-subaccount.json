@@ -13,20 +13,6 @@
       "description": "Bound from discovery step 4",
       "required": true,
       "default": "12345"
-    },
-    {
-      "name": "product",
-      "type": "string",
-      "description": "Bound from discovery step 8",
-      "required": true,
-      "default": "REGULAR SHARE"
-    },
-    {
-      "name": "deposit",
-      "type": "string",
-      "description": "Bound from discovery step 9",
-      "required": true,
-      "default": "25.00"
     }
   ],
   "outputs": [
@@ -45,14 +31,14 @@
       "default": null
     },
     {
-      "name": "new_account_id",
+      "name": "new_account_number",
       "type": "string",
       "description": "Extracted from the confirmation/result screen",
       "required": true,
       "default": null
     },
     {
-      "name": "confirmation",
+      "name": "confirmation_code",
       "type": "string",
       "description": "Extracted from the confirmation/result screen",
       "required": true,
@@ -71,13 +57,20 @@
           "role": null,
           "accessible_name": null,
           "text": null
+        },
+        {
+          "by": "role",
+          "name": null,
+          "role": "textbox",
+          "accessible_name": "OPERATOR ID",
+          "text": null
         }
       ],
       "value_from": "secret:operator_id",
       "literal": null,
-      "key": null,
+      "key": "optional",
       "wait_ms": null,
-      "notes": ""
+      "notes": "I need to sign on using the operator ID and password."
     },
     {
       "id": "s2",
@@ -90,13 +83,20 @@
           "role": null,
           "accessible_name": null,
           "text": null
+        },
+        {
+          "by": "role",
+          "name": null,
+          "role": "textbox",
+          "accessible_name": "PASSWORD",
+          "text": null
         }
       ],
       "value_from": "secret:password",
       "literal": null,
-      "key": null,
+      "key": "optional",
       "wait_ms": null,
-      "notes": ""
+      "notes": "I need to fill in the password and submit the form."
     },
     {
       "id": "s3",
@@ -119,10 +119,10 @@
         }
       ],
       "value_from": null,
-      "literal": null,
-      "key": null,
+      "literal": "",
+      "key": "optional",
       "wait_ms": null,
-      "notes": ""
+      "notes": "I need to submit the form to sign on."
     },
     {
       "id": "s4",
@@ -135,13 +135,20 @@
           "role": null,
           "accessible_name": null,
           "text": null
+        },
+        {
+          "by": "role",
+          "name": null,
+          "role": "textbox",
+          "accessible_name": "MEM NO",
+          "text": null
         }
       ],
       "value_from": "input:member_id",
-      "literal": null,
-      "key": null,
+      "literal": "12345",
+      "key": "optional",
       "wait_ms": null,
-      "notes": ""
+      "notes": "I need to look up member 12345."
     },
     {
       "id": "s5",
@@ -164,10 +171,10 @@
         }
       ],
       "value_from": null,
-      "literal": null,
-      "key": null,
+      "literal": "",
+      "key": "optional",
       "wait_ms": null,
-      "notes": ""
+      "notes": "I need to inquire about member 12345."
     },
     {
       "id": "s6",
@@ -190,10 +197,10 @@
         }
       ],
       "value_from": null,
-      "literal": null,
-      "key": null,
+      "literal": "",
+      "key": "optional",
       "wait_ms": null,
-      "notes": ""
+      "notes": "I need to open a new sub-account for the member."
     },
     {
       "id": "s7",
@@ -216,51 +223,13 @@
         }
       ],
       "value_from": null,
-      "literal": null,
-      "key": null,
+      "literal": "",
+      "key": "optional",
       "wait_ms": null,
-      "notes": ""
+      "notes": "I need to acknowledge the OFAC scan to proceed."
     },
     {
       "id": "s8",
-      "action": "select",
-      "frame": "main",
-      "locators": [
-        {
-          "by": "name",
-          "name": "PROD",
-          "role": null,
-          "accessible_name": null,
-          "text": null
-        }
-      ],
-      "value_from": "input:product",
-      "literal": null,
-      "key": null,
-      "wait_ms": null,
-      "notes": ""
-    },
-    {
-      "id": "s9",
-      "action": "fill",
-      "frame": "main",
-      "locators": [
-        {
-          "by": "name",
-          "name": "DEPAMT",
-          "role": null,
-          "accessible_name": null,
-          "text": null
-        }
-      ],
-      "value_from": "input:deposit",
-      "literal": null,
-      "key": null,
-      "wait_ms": null,
-      "notes": ""
-    },
-    {
-      "id": "s10",
       "action": "click",
       "frame": "main",
       "locators": [
@@ -280,10 +249,10 @@
         }
       ],
       "value_from": null,
-      "literal": null,
-      "key": null,
+      "literal": "",
+      "key": "optional",
       "wait_ms": null,
-      "notes": ""
+      "notes": "I need to submit the form to open the sub-account."
     }
   ],
   "checkpoint": {
@@ -292,5 +261,5 @@
       "SUB-ACCOUNT OPENED"
     ]
   },
-  "created_at": "2026-09-09T16:23:26.206207+00:00"
+  "created_at": "2026-09-09T17:43:01.760552+00:00"
 }

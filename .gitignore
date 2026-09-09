@@ -31,7 +31,7 @@ playwright-report/
 test-results/
 blob-report/
 
-# Local agent evidence (keep committed artifacts; ignore bulky run dumps)
+# Local agent evidence (keep committed artifacts + curated discovery pack)
 evidence/runs/
 *.png
 *.jpg
@@ -39,6 +39,12 @@ evidence/runs/
 *.webp
 *.mp4
 *.webm
+!evidence/discovery/
+!evidence/discovery/**
+!evidence/replay/
+!evidence/replay/**
+!evidence/replay-not-found/
+!evidence/replay-not-found/**
 
 # OS / editor
 .DS_Store
