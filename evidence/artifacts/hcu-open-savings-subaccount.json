@@ -1,0 +1,296 @@
+{
+  "schema_version": "1.0",
+  "id": "hcu-open-savings-subaccount",
+  "name": "Open savings sub-account",
+  "version": 1,
+  "description": "Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.",
+  "surface": "web",
+  "entry": "http://127.0.0.1:7878/",
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "description": "Bound from discovery step 4",
+      "required": true,
+      "default": "12345"
+    },
+    {
+      "name": "product",
+      "type": "string",
+      "description": "Bound from discovery step 8",
+      "required": true,
+      "default": "REGULAR SHARE"
+    },
+    {
+      "name": "deposit",
+      "type": "string",
+      "description": "Bound from discovery step 9",
+      "required": true,
+      "default": "25.00"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "member_name",
+      "type": "string",
+      "description": "Extracted from the confirmation/result screen",
+      "required": true,
+      "default": null
+    },
+    {
+      "name": "savings_balance",
+      "type": "string",
+      "description": "Extracted from the confirmation/result screen",
+      "required": true,
+      "default": null
+    },
+    {
+      "name": "new_account_id",
+      "type": "string",
+      "description": "Extracted from the confirmation/result screen",
+      "required": true,
+      "default": null
+    },
+    {
+      "name": "confirmation",
+      "type": "string",
+      "description": "Extracted from the confirmation/result screen",
+      "required": true,
+      "default": null
+    }
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "action": "fill",
+      "frame": "root",
+      "locators": [
+        {
+          "by": "name",
+          "name": "OPID",
+          "role": null,
+          "accessible_name": null,
+          "text": null
+        }
+      ],
+      "value_from": "secret:operator_id",
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    },
+    {
+      "id": "s2",
+      "action": "fill",
+      "frame": "root",
+      "locators": [
+        {
+          "by": "name",
+          "name": "PSWD",
+          "role": null,
+          "accessible_name": null,
+          "text": null
+        }
+      ],
+      "value_from": "secret:password",
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    },
+    {
+      "id": "s3",
+      "action": "click",
+      "frame": "root",
+      "locators": [
+        {
+          "by": "role",
+          "name": null,
+          "role": "button",
+          "accessible_name": "ENTER",
+          "text": null
+        },
+        {
+          "by": "text",
+          "name": null,
+          "role": null,
+          "accessible_name": null,
+          "text": "ENTER"
+        }
+      ],
+      "value_from": null,
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    },
+    {
+      "id": "s4",
+      "action": "fill",
+      "frame": "main",
+      "locators": [
+        {
+          "by": "name",
+          "name": "MEMNO",
+          "role": null,
+          "accessible_name": null,
+          "text": null
+        }
+      ],
+      "value_from": "input:member_id",
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    },
+    {
+      "id": "s5",
+      "action": "click",
+      "frame": "main",
+      "locators": [
+        {
+          "by": "role",
+          "name": null,
+          "role": "button",
+          "accessible_name": "INQUIRE",
+          "text": null
+        },
+        {
+          "by": "text",
+          "name": null,
+          "role": null,
+          "accessible_name": null,
+          "text": "INQUIRE"
+        }
+      ],
+      "value_from": null,
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    },
+    {
+      "id": "s6",
+      "action": "click",
+      "frame": "main",
+      "locators": [
+        {
+          "by": "role",
+          "name": null,
+          "role": "button",
+          "accessible_name": "OPEN SUB-ACCOUNT",
+          "text": null
+        },
+        {
+          "by": "text",
+          "name": null,
+          "role": null,
+          "accessible_name": null,
+          "text": "OPEN SUB-ACCOUNT"
+        }
+      ],
+      "value_from": null,
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    },
+    {
+      "id": "s7",
+      "action": "click",
+      "frame": "main",
+      "locators": [
+        {
+          "by": "role",
+          "name": null,
+          "role": "button",
+          "accessible_name": "CONTINUE",
+          "text": null
+        },
+        {
+          "by": "text",
+          "name": null,
+          "role": null,
+          "accessible_name": null,
+          "text": "CONTINUE"
+        }
+      ],
+      "value_from": null,
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    },
+    {
+      "id": "s8",
+      "action": "select",
+      "frame": "main",
+      "locators": [
+        {
+          "by": "name",
+          "name": "PROD",
+          "role": null,
+          "accessible_name": null,
+          "text": null
+        }
+      ],
+      "value_from": "input:product",
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    },
+    {
+      "id": "s9",
+      "action": "fill",
+      "frame": "main",
+      "locators": [
+        {
+          "by": "name",
+          "name": "DEPAMT",
+          "role": null,
+          "accessible_name": null,
+          "text": null
+        }
+      ],
+      "value_from": "input:deposit",
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    },
+    {
+      "id": "s10",
+      "action": "click",
+      "frame": "main",
+      "locators": [
+        {
+          "by": "role",
+          "name": null,
+          "role": "button",
+          "accessible_name": "SUBMIT OPEN",
+          "text": null
+        },
+        {
+          "by": "text",
+          "name": null,
+          "role": null,
+          "accessible_name": null,
+          "text": "SUBMIT OPEN"
+        }
+      ],
+      "value_from": null,
+      "literal": null,
+      "key": null,
+      "wait_ms": null,
+      "notes": ""
+    }
+  ],
+  "checkpoint": {
+    "frame": "main",
+    "texts": [
+      "SUB-ACCOUNT OPENED"
+    ]
+  },
+  "created_at": "2026-09-09T16:23:26.206207+00:00"
+}

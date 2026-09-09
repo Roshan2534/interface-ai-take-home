@@ -1,0 +1,52 @@
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# Virtualenv
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.log
+
+# Playwright / browsers
+.playwright-cli/
+playwright-report/
+test-results/
+blob-report/
+
+# Local agent evidence (keep committed artifacts; ignore bulky run dumps)
+evidence/runs/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.mp4
+*.webm
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Cursor
+.cursor/
