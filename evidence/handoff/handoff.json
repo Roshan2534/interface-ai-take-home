@@ -1,12 +1,15 @@
 [
   {
-    "ts": "2026-09-09T19:06:07.813649+00:00",
+    "ts": "2026-09-09T20:36:38.745660+00:00",
     "reason": "Recoverable host interstitial that this capability did not record. Stop rather than clicking through an unknown dialog.",
     "goal": "Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.",
     "step_id": "s5",
-    "observed": "FUNCTIONS Member Inquiry Open Sub-Account Batch Reports Wire Transfer Reset Training Data Log Off PF5 Inquire PF9 Open Clear Logoff HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM ----- HOST MESSAGE 12E CIF ADDRESS CHANGE PENDING FOR MEMBER 77777. Review is not complete. Continue only if you accept the current address of record.",
+    "observed": "FUNCTIONS Member Inquiry Open Sub-Account Wire Transfer GL Override Reset Training Data Log Off PF5 Inquire PF9 Open Clear Logoff HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM ----- HOST MESSAGE 12E CIF ADDRESS CHANGE PENDING FOR MEMBER 77777. Review is not complete. Continue only if you accept the current address of record.",
     "controller": "human",
     "live_session": "same Playwright page / Chromium instance",
+    "attempt": 1,
+    "max_attempts": 2,
+    "restated": false,
     "decision": "resume",
     "human_events": [
       {
@@ -27,6 +30,6 @@
         "name": "main"
       }
     ],
-    "ended_at": "2026-09-09T19:06:08.358596+00:00"
+    "ended_at": "2026-09-09T20:36:38.914995+00:00"
   }
 ]

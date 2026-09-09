@@ -32,7 +32,7 @@ Return ONE JSON object only, no markdown, with this shape:
 Rules:
 - Before sign-on the page has no named frames; use frame "root".
 - After sign-on this host uses a frameset: menu, banner, main. Do the work in "main" unless you need the menu.
-- Prefer field_name when listed. Prefer role+name for buttons/links.
+- Prefer field_name when listed. Always set field_name for inputs: OPID, PSWD, MEMNO, PROD, DEPAMT. Prefer role+name for buttons/links.
 - Buttons and links must use action=click. Never use press for CONTINUE, INQUIRE, ENTER, or SUBMIT OPEN.
 - action=press is only for a real keyboard key with no target control (set key, leave name empty).
 - On OFAC or other interstitials, click the CONTINUE button in frame main, then fill PROD and DEPAMT and click SUBMIT OPEN.
@@ -142,12 +142,16 @@ def _complete_openai(cfg: LLMConfig, messages: list[dict[str, Any]]) -> str:
     from openai import OpenAI
 
     client = OpenAI(api_key=cfg.api_key)
-    response = client.chat.completions.create(
-        model=cfg.model,
-        temperature=0,
-        response_format={"type": "json_object"},
-        messages=[{"role": "system", "content": SYSTEM}, *messages],
-    )
+    payload = {
+        "model": cfg.model,
+        "response_format": {"type": "json_object"},
+        "messages": [{"role": "system", "content": SYSTEM}, *messages],
+    }
+    try:
+        response = client.chat.completions.create(**payload, temperature=0)
+    except Exception:
+        # GPT-5/GPT-6 reject temperature on some endpoints.
+        response = client.chat.completions.create(**payload)
     return response.choices[0].message.content or "{}"
 
 
@@ -162,8 +166,7 @@ def _complete_anthropic(cfg: LLMConfig, messages: list[dict[str, Any]]) -> str:
         )
     response = client.messages.create(
         model=cfg.model,
-        max_tokens=1024,
-        temperature=0,
+        max_tokens=4096,
         system=SYSTEM,
         messages=converted,
     )

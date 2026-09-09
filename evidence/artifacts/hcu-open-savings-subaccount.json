@@ -13,6 +13,20 @@
       "description": "Bound from discovery step 4",
       "required": true,
       "default": "12345"
+    },
+    {
+      "name": "product",
+      "type": "string",
+      "description": "Bound from discovery step 8",
+      "required": true,
+      "default": "REGULAR SHARE - SAVINGS"
+    },
+    {
+      "name": "deposit",
+      "type": "string",
+      "description": "Bound from discovery step 9",
+      "required": true,
+      "default": "25.00"
     }
   ],
   "outputs": [
@@ -43,6 +57,20 @@
       "description": "Extracted from the confirmation/result screen",
       "required": true,
       "default": null
+    },
+    {
+      "name": "product",
+      "type": "string",
+      "description": "Extracted from the confirmation/result screen",
+      "required": true,
+      "default": null
+    },
+    {
+      "name": "opening_deposit",
+      "type": "string",
+      "description": "Extracted from the confirmation/result screen",
+      "required": true,
+      "default": null
     }
   ],
   "steps": [
@@ -62,15 +90,15 @@
           "by": "role",
           "name": null,
           "role": "textbox",
-          "accessible_name": "OPERATOR ID",
+          "accessible_name": null,
           "text": null
         }
       ],
       "value_from": "secret:operator_id",
       "literal": null,
-      "key": "optional",
+      "key": null,
       "wait_ms": null,
-      "notes": "I need to sign on using the operator ID and password."
+      "notes": "Enter the operator ID to begin sign-on."
     },
     {
       "id": "s2",
@@ -88,15 +116,15 @@
           "by": "role",
           "name": null,
           "role": "textbox",
-          "accessible_name": "PASSWORD",
+          "accessible_name": null,
           "text": null
         }
       ],
       "value_from": "secret:password",
       "literal": null,
-      "key": "optional",
+      "key": null,
       "wait_ms": null,
-      "notes": "I need to fill in the password and submit the form."
+      "notes": "Enter the sign-on password securely."
     },
     {
       "id": "s3",
@@ -119,10 +147,10 @@
         }
       ],
       "value_from": null,
-      "literal": "",
-      "key": "optional",
+      "literal": null,
+      "key": null,
       "wait_ms": null,
-      "notes": "I need to submit the form to sign on."
+      "notes": "Submit the sign-on credentials."
     },
     {
       "id": "s4",
@@ -140,15 +168,15 @@
           "by": "role",
           "name": null,
           "role": "textbox",
-          "accessible_name": "MEM NO",
+          "accessible_name": null,
           "text": null
         }
       ],
       "value_from": "input:member_id",
       "literal": "12345",
-      "key": "optional",
+      "key": null,
       "wait_ms": null,
-      "notes": "I need to look up member 12345."
+      "notes": "Look up the requested member."
     },
     {
       "id": "s5",
@@ -171,10 +199,10 @@
         }
       ],
       "value_from": null,
-      "literal": "",
-      "key": "optional",
+      "literal": null,
+      "key": null,
       "wait_ms": null,
-      "notes": "I need to inquire about member 12345."
+      "notes": "Retrieve the member's name and savings balance."
     },
     {
       "id": "s6",
@@ -185,7 +213,7 @@
           "by": "role",
           "name": null,
           "role": "button",
-          "accessible_name": "OPEN SUB-ACCOUNT",
+          "accessible_name": "OPEN SUB ACCOUNT",
           "text": null
         },
         {
@@ -193,14 +221,14 @@
           "name": null,
           "role": null,
           "accessible_name": null,
-          "text": "OPEN SUB-ACCOUNT"
+          "text": "OPEN SUB ACCOUNT"
         }
       ],
       "value_from": null,
-      "literal": "",
-      "key": "optional",
+      "literal": null,
+      "key": null,
       "wait_ms": null,
-      "notes": "I need to open a new sub-account for the member."
+      "notes": "Recorded JANE A OKONKWO and savings balance 4,250.18; begin opening the sub-account."
     },
     {
       "id": "s7",
@@ -223,13 +251,65 @@
         }
       ],
       "value_from": null,
-      "literal": "",
-      "key": "optional",
+      "literal": null,
+      "key": null,
       "wait_ms": null,
-      "notes": "I need to acknowledge the OFAC scan to proceed."
+      "notes": "Acknowledge the completed OFAC scan with no matches."
     },
     {
       "id": "s8",
+      "action": "select",
+      "frame": "main",
+      "locators": [
+        {
+          "by": "name",
+          "name": "PROD",
+          "role": null,
+          "accessible_name": null,
+          "text": null
+        },
+        {
+          "by": "role",
+          "name": null,
+          "role": "combobox",
+          "accessible_name": null,
+          "text": null
+        }
+      ],
+      "value_from": "input:product",
+      "literal": "REGULAR SHARE - SAVINGS",
+      "key": null,
+      "wait_ms": null,
+      "notes": "Select the requested REGULAR SHARE product."
+    },
+    {
+      "id": "s9",
+      "action": "fill",
+      "frame": "main",
+      "locators": [
+        {
+          "by": "name",
+          "name": "DEPAMT",
+          "role": null,
+          "accessible_name": null,
+          "text": null
+        },
+        {
+          "by": "role",
+          "name": null,
+          "role": "textbox",
+          "accessible_name": null,
+          "text": null
+        }
+      ],
+      "value_from": "input:deposit",
+      "literal": "25.00",
+      "key": null,
+      "wait_ms": null,
+      "notes": "Enter the requested opening deposit of 25.00."
+    },
+    {
+      "id": "s10",
       "action": "click",
       "frame": "main",
       "locators": [
@@ -249,10 +329,10 @@
         }
       ],
       "value_from": null,
-      "literal": "",
-      "key": "optional",
+      "literal": null,
+      "key": null,
       "wait_ms": null,
-      "notes": "I need to submit the form to open the sub-account."
+      "notes": "Submit the requested REGULAR SHARE opening with a 25.00 deposit."
     }
   ],
   "checkpoint": {
@@ -261,5 +341,5 @@
       "SUB-ACCOUNT OPENED"
     ]
   },
-  "created_at": "2026-09-09T17:43:01.760552+00:00"
+  "created_at": "2026-09-09T20:32:09.581827+00:00"
 }

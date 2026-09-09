@@ -5,4 +5,6 @@
 {"step": 5, "step_id": "s5", "action": "click", "value": ""}
 {"step": 6, "step_id": "s6", "action": "click", "value": ""}
 {"step": 7, "step_id": "s7", "action": "click", "value": ""}
-{"step": 8, "step_id": "s8", "action": "click", "value": ""}
+{"step": 8, "step_id": "s8", "action": "select", "value": "REGULAR SHARE - SAVINGS"}
+{"step": 9, "step_id": "s9", "action": "fill", "value": "25.00"}
+{"step": 10, "step_id": "s10", "action": "click", "value": ""}

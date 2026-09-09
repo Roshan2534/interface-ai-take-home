@@ -1,85 +1,338 @@
-2026-09-09 14:04:48,864 DEBUG [cua] logging_ready run_dir=/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T190448Z
-2026-09-09 14:04:48,865 INFO [cua] replay.start {"target": "http://127.0.0.1:7878/", "inputs": {"member_id": "77777"}, "handoff": "simulate"}
-2026-09-09 14:04:48,865 INFO [cua] run.dir {"path": "/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T190448Z", "kind": "replay"}
-2026-09-09 14:04:48,865 INFO [cua] control.init {"controller": "automation", "mode": "simulate", "desk_port": 7879}
-2026-09-09 14:04:48,865 INFO [cua] surface.goto {"url": "http://127.0.0.1:7878/"}
-2026-09-09 14:04:48,865 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/
-2026-09-09 14:04:48,874 INFO [cua] run.event {"step": 1, "step_id": "s1", "action": "fill", "value": "[secret]"}
-2026-09-09 14:04:48,875 INFO [cua] surface.replay_step {"step_id": "s1", "action": "fill", "frame": "root"}
-2026-09-09 14:04:51,406 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/
-2026-09-09 14:04:51,407 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/
-2026-09-09 14:04:51,408 DEBUG [cua] surface.observe url=http://127.0.0.1:7878/
-2026-09-09 14:04:51,447 DEBUG [cua] run.save_step index=1 bytes=15810
-2026-09-09 14:04:51,453 DEBUG [cua] outcomes.clear_screen chars=187
-2026-09-09 14:04:51,453 INFO [cua] run.event {"step": 2, "step_id": "s2", "action": "fill", "value": "[secret]"}
-2026-09-09 14:04:51,453 INFO [cua] surface.replay_step {"step_id": "s2", "action": "fill", "frame": "root"}
-2026-09-09 14:04:53,994 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/
-2026-09-09 14:04:53,995 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/
-2026-09-09 14:04:53,995 DEBUG [cua] surface.observe url=http://127.0.0.1:7878/
-2026-09-09 14:04:54,023 DEBUG [cua] run.save_step index=2 bytes=16140
-2026-09-09 14:04:54,023 DEBUG [cua] outcomes.clear_screen chars=187
-2026-09-09 14:04:54,023 INFO [cua] run.event {"step": 3, "step_id": "s3", "action": "click", "value": ""}
-2026-09-09 14:04:54,024 INFO [cua] surface.replay_step {"step_id": "s3", "action": "click", "frame": "root"}
-2026-09-09 14:04:54,562 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:04:54,562 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:04:54,563 DEBUG [cua] surface.observe url=http://127.0.0.1:7878/console
-2026-09-09 14:05:18,655 DEBUG [cua] run.save_step index=3 bytes=23180
-2026-09-09 14:05:18,655 DEBUG [cua] outcomes.clear_screen chars=356
-2026-09-09 14:05:18,656 INFO [cua] run.event {"step": 4, "step_id": "s4", "action": "fill", "value": "77777"}
-2026-09-09 14:05:18,656 INFO [cua] surface.replay_step {"step_id": "s4", "action": "fill", "frame": "main"}
-2026-09-09 14:05:19,174 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:05:19,174 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:05:19,175 DEBUG [cua] surface.observe url=http://127.0.0.1:7878/console
-2026-09-09 14:05:43,221 DEBUG [cua] run.save_step index=4 bytes=23435
-2026-09-09 14:05:43,221 DEBUG [cua] outcomes.clear_screen chars=356
-2026-09-09 14:05:43,222 INFO [cua] run.event {"step": 5, "step_id": "s5", "action": "click", "value": ""}
-2026-09-09 14:05:43,223 INFO [cua] surface.replay_step {"step_id": "s5", "action": "click", "frame": "main"}
-2026-09-09 14:05:43,748 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:05:43,749 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:05:43,749 DEBUG [cua] surface.observe url=http://127.0.0.1:7878/console
-2026-09-09 14:06:07,811 DEBUG [cua] run.save_step index=5 bytes=24241
-2026-09-09 14:06:07,812 INFO [cua] outcomes.classified {"outcome": "unexpected_dialog", "status": "failed", "handoff": true}
-2026-09-09 14:06:07,812 INFO [cua] replay.classified {"outcome": "unexpected_dialog", "step_id": "s5", "status": "failed"}
-2026-09-09 14:06:07,813 INFO [cua] handoff.gate {"mode": "simulate", "reason": "Recoverable host interstitial that this capability did not record. Stop rather than clicking through an unknown dialog.", "step_id": "s5"}
-2026-09-09 14:06:07,813 INFO [cua] handoff.start {"ts": "2026-09-09T19:06:07.813649+00:00", "reason": "Recoverable host interstitial that this capability did not record. Stop rather than clicking through an unknown dialog.", "goal": "Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.", "step_id": "s5", "observed": "FUNCTIONS Member Inquiry Open Sub-Account Batch Reports Wire Transfer Reset Training Data Log Off PF5 Inquire PF9 Open Clear Logoff HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM ----- HOST MESSAGE 12E CIF ADDRESS CHANGE PENDING FOR MEMBER 77777. Review is not complete. Continue only if you accept the current address of record.", "controller": "human", "live_session": "same Playwright page / Chromium instance"}
-2026-09-09 14:06:07,824 INFO [cua] operator.desk_bound {"port": 7879}
-2026-09-09 14:06:07,825 INFO [cua] handoff.desk {"url": "http://127.0.0.1:7879/", "mode": "simulate"}
-2026-09-09 14:06:07,825 INFO [cua] handoff.simulate {"action": "click CONTINUE on live session"}
-2026-09-09 14:06:07,825 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:06:07,825 DEBUG [cua] policy.action_ok action=click
-2026-09-09 14:06:07,825 INFO [cua] surface.act {"action": "click", "frame": "main", "name": "CONTINUE", "field_name": null, "risky": false}
-2026-09-09 14:06:07,849 INFO [cua] human.action {"kind": "click", "tag": "INPUT", "name": "ACT", "text": "CONTINUE"}
-2026-09-09 14:06:07,857 INFO [cua] human.navigate {"url": "http://127.0.0.1:7878/inquiry/address-ack", "frame": "main"}
-2026-09-09 14:06:08,357 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:06:08,827 INFO [cua] operator.desk_stopped 
-2026-09-09 14:06:08,828 INFO [cua] handoff.end {"decision": "resume", "human_event_count": 3, "controller": "automation"}
-2026-09-09 14:06:16,846 DEBUG [cua] outcomes.clear_screen chars=375
-2026-09-09 14:06:16,847 INFO [cua] handoff.resolved {"next_step": "continue_replay"}
-2026-09-09 14:06:16,847 INFO [cua] run.event {"step": 6, "step_id": "s6", "action": "click", "value": ""}
-2026-09-09 14:06:16,847 INFO [cua] surface.replay_step {"step_id": "s6", "action": "click", "frame": "main"}
-2026-09-09 14:06:16,883 INFO [cua] human.navigate {"url": "http://127.0.0.1:7878/open?", "frame": "main"}
-2026-09-09 14:06:17,380 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:06:17,381 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:06:17,382 DEBUG [cua] surface.observe url=http://127.0.0.1:7878/console
-2026-09-09 14:06:41,435 DEBUG [cua] run.save_step index=6 bytes=22608
-2026-09-09 14:06:41,436 DEBUG [cua] outcomes.clear_screen chars=312
-2026-09-09 14:06:41,436 INFO [cua] run.event {"step": 7, "step_id": "s7", "action": "click", "value": ""}
-2026-09-09 14:06:41,436 INFO [cua] surface.replay_step {"step_id": "s7", "action": "click", "frame": "main"}
-2026-09-09 14:06:41,474 INFO [cua] human.navigate {"url": "http://127.0.0.1:7878/open/ofac", "frame": "main"}
-2026-09-09 14:06:41,973 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:06:41,974 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:06:41,974 DEBUG [cua] surface.observe url=http://127.0.0.1:7878/console
-2026-09-09 14:07:06,035 DEBUG [cua] run.save_step index=7 bytes=27693
-2026-09-09 14:07:06,037 DEBUG [cua] outcomes.clear_screen chars=442
-2026-09-09 14:07:06,037 INFO [cua] run.event {"step": 8, "step_id": "s8", "action": "click", "value": ""}
-2026-09-09 14:07:06,037 INFO [cua] surface.replay_step {"step_id": "s8", "action": "click", "frame": "main"}
-2026-09-09 14:07:06,074 INFO [cua] human.navigate {"url": "http://127.0.0.1:7878/open", "frame": "main"}
-2026-09-09 14:07:06,077 INFO [cua] human.navigate {"url": "http://127.0.0.1:7878/print/spool?t=HCU%20SPOOL%20%20HCU-CICS2%20%20CONF%20CUS-44191%20%20MEM%2077777%20%20NEW%2080-77777-02%20%20SAVINGS%20%20BAL%2025.00", "frame": "spool"}
-2026-09-09 14:07:06,575 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:07:06,577 DEBUG [cua] policy.allow url=http://127.0.0.1:7878/console
-2026-09-09 14:07:06,577 DEBUG [cua] surface.observe url=http://127.0.0.1:7878/console
-2026-09-09 14:07:30,640 DEBUG [cua] run.save_step index=8 bytes=34980
-2026-09-09 14:07:30,642 DEBUG [cua] outcomes.clear_screen chars=467
-2026-09-09 14:07:30,644 INFO [cua] replay.success {"outputs": {"member_name": "MARIA L SANTOS", "savings_balance": "640.12", "new_account_number": "80-77777-02", "confirmation_code": "CUS-44191"}}
-2026-09-09 14:07:30,645 INFO [cua] run.finish {"status": "success", "outcome": "opened_subaccount", "step_id": "s8", "reason": "Checkpoint matched. Capability completed without the LLM."}
-2026-09-09 14:07:30,645 INFO [cua] cli.finish {"status": "success", "outcome": "opened_subaccount", "run_dir": "/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T190448Z"}
+2026-09-09 15:36:32,457 DEBUG [cua] logging_ready run_dir=/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T203632Z
+2026-09-09 15:36:32,458 INFO [cua] control.init {"controller": "automation", "mode": "simulate", "desk_port": 7879, "max_attempts": 2}
+2026-09-09 15:36:32,458 INFO [cua] replay.start {"target": "http://127.0.0.1:7878/", "inputs": {"member_id": "77777"}, "handoff": "simulate", "handoff_max": 2}
+2026-09-09 15:36:32,458 INFO [cua] run.dir {"path": "/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T203632Z", "kind": "replay"}
+2026-09-09 15:36:32,458 INFO [cua] surface.goto {"url": "http://127.0.0.1:7878/"}
+2026-09-09 15:36:32,458 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:32,458 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:32,467 INFO [cua] run.event {"step": 1, "step_id": "s1", "action": "fill", "value": "[secret]"}
+2026-09-09 15:36:32,467 INFO [cua] surface.replay_step {"step_id": "s1", "action": "fill", "frame": "root"}
+2026-09-09 15:36:32,467 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:32,468 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:32,468 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:32,468 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:32,468 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:34,117 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:34,118 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:34,118 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:34,118 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:34,119 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:34,122 DEBUG [cua] outcomes.clear_screen chars=187
+2026-09-09 15:36:34,122 DEBUG [cua] run.save_step index=1 bytes=0
+2026-09-09 15:36:34,122 INFO [cua] run.event {"step": 2, "step_id": "s2", "action": "fill", "value": "[secret]"}
+2026-09-09 15:36:34,123 INFO [cua] surface.replay_step {"step_id": "s2", "action": "fill", "frame": "root"}
+2026-09-09 15:36:34,123 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:34,123 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:34,123 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:34,123 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:34,124 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:35,788 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:35,789 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:35,790 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:35,790 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:35,790 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:35,793 DEBUG [cua] outcomes.clear_screen chars=187
+2026-09-09 15:36:35,794 DEBUG [cua] run.save_step index=2 bytes=0
+2026-09-09 15:36:35,794 INFO [cua] run.event {"step": 3, "step_id": "s3", "action": "click", "value": ""}
+2026-09-09 15:36:35,795 INFO [cua] surface.replay_step {"step_id": "s3", "action": "click", "frame": "root"}
+2026-09-09 15:36:35,795 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:35,795 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:35,795 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:35,795 DEBUG [cua] policy.path_ok path=/
+2026-09-09 15:36:35,795 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/
+2026-09-09 15:36:35,956 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:35,957 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:35,957 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:35,957 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:35,957 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:35,958 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:35,958 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:35,958 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:35,958 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:35,958 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:35,958 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:35,958 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:35,958 DEBUG [cua] policy.path_ok path=/inquiry
+2026-09-09 15:36:35,958 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:36,799 DEBUG [cua] outcomes.clear_screen chars=354
+2026-09-09 15:36:36,800 DEBUG [cua] run.save_step index=3 bytes=0
+2026-09-09 15:36:36,800 INFO [cua] run.event {"step": 4, "step_id": "s4", "action": "fill", "value": "77777"}
+2026-09-09 15:36:36,800 INFO [cua] surface.replay_step {"step_id": "s4", "action": "fill", "frame": "main"}
+2026-09-09 15:36:36,800 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:36,801 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:36,801 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:36,801 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:36,801 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:36,801 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:36,801 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:36,801 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:36,801 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:36,801 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:36,801 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:36,801 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:36,801 DEBUG [cua] policy.path_ok path=/inquiry
+2026-09-09 15:36:36,801 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:36,939 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:36,941 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:36,941 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:36,941 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:36,941 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:36,941 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:36,942 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:36,942 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:36,942 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:36,942 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:36,942 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:36,942 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:36,942 DEBUG [cua] policy.path_ok path=/inquiry
+2026-09-09 15:36:36,942 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:37,750 DEBUG [cua] outcomes.clear_screen chars=354
+2026-09-09 15:36:37,751 DEBUG [cua] run.save_step index=4 bytes=0
+2026-09-09 15:36:37,751 INFO [cua] run.event {"step": 5, "step_id": "s5", "action": "click", "value": ""}
+2026-09-09 15:36:37,752 INFO [cua] surface.replay_step {"step_id": "s5", "action": "click", "frame": "main"}
+2026-09-09 15:36:37,752 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:37,752 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:37,752 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:37,752 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:37,752 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:37,753 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:37,753 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:37,753 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:37,753 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:37,753 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:37,753 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:37,754 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:37,754 DEBUG [cua] policy.path_ok path=/inquiry
+2026-09-09 15:36:37,754 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:37,911 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:37,912 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:37,912 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:37,912 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:37,912 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:37,913 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:37,913 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:37,913 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:37,913 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:37,913 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:37,913 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:37,913 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:37,914 DEBUG [cua] policy.path_ok path=/inquiry
+2026-09-09 15:36:37,914 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:38,727 INFO [cua] outcomes.classified {"outcome": "unexpected_dialog", "status": "failed", "handoff": true}
+2026-09-09 15:36:38,744 INFO [cua] surface.shot {"ms": 16}
+2026-09-09 15:36:38,745 DEBUG [cua] run.save_step index=5 bytes=20488
+2026-09-09 15:36:38,745 INFO [cua] replay.classified {"outcome": "unexpected_dialog", "step_id": "s5", "status": "failed"}
+2026-09-09 15:36:38,745 INFO [cua] handoff.attempt {"n": 1, "max": 2, "restated": false, "reason": "Recoverable host interstitial that this capability did not record. Stop rather than clicking through an unknown dialog."}
+2026-09-09 15:36:38,745 INFO [cua] handoff.gate {"mode": "simulate", "reason": "Recoverable host interstitial that this capability did not record. Stop rather than clicking through an unknown dialog.", "step_id": "s5", "attempt": 1, "restated": false}
+2026-09-09 15:36:38,745 INFO [cua] handoff.start {"ts": "2026-09-09T20:36:38.745660+00:00", "reason": "Recoverable host interstitial that this capability did not record. Stop rather than clicking through an unknown dialog.", "goal": "Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.", "step_id": "s5", "observed": "FUNCTIONS Member Inquiry Open Sub-Account Wire Transfer GL Override Reset Training Data Log Off PF5 Inquire PF9 Open Clear Logoff HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM ----- HOST MESSAGE 12E CIF ADDRESS CHANGE PENDING FOR MEMBER 77777. Review is not complete. Continue only if you accept the current address of record.", "controller": "human", "live_session": "same Playwright page / Chromium instance", "attempt": 1, "max_attempts": 2, "restated": false}
+2026-09-09 15:36:38,752 INFO [cua] operator.desk_bound {"port": 7879}
+2026-09-09 15:36:38,753 INFO [cua] handoff.desk {"url": "http://127.0.0.1:7879/", "mode": "simulate", "attempt": 1, "restated": false}
+2026-09-09 15:36:38,753 INFO [cua] handoff.instructions_shown {"desk_url": "http://127.0.0.1:7879/", "attempt": 1, "restated": false}
+2026-09-09 15:36:38,753 INFO [cua] handoff.simulate {"action": "click CONTINUE on live session"}
+2026-09-09 15:36:38,753 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:38,753 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:38,753 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:38,753 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:38,753 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:38,753 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:38,754 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:38,754 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:38,754 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:38,754 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:38,754 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:38,754 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:38,754 DEBUG [cua] policy.path_ok path=/inquiry
+2026-09-09 15:36:38,754 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/inquiry
+2026-09-09 15:36:38,754 DEBUG [cua] policy.action_ok action=click
+2026-09-09 15:36:38,754 INFO [cua] surface.act {"action": "click", "frame": "main", "name": "CONTINUE", "field_name": null, "risky": false}
+2026-09-09 15:36:38,786 INFO [cua] human.action {"kind": "click", "tag": "INPUT", "name": "ACT", "text": "CONTINUE"}
+2026-09-09 15:36:38,791 INFO [cua] human.navigate {"url": "http://127.0.0.1:7878/inquiry/address-ack", "frame": "main"}
+2026-09-09 15:36:38,913 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:38,913 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:38,913 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:38,914 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:38,914 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:38,914 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:38,914 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:38,914 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:38,914 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:38,914 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:38,914 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:38,914 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/inquiry/address-ack
+2026-09-09 15:36:38,914 DEBUG [cua] policy.path_ok path=/inquiry/address-ack
+2026-09-09 15:36:38,914 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/inquiry/address-ack
+2026-09-09 15:36:39,255 INFO [cua] operator.desk_stopped 
+2026-09-09 15:36:39,256 INFO [cua] handoff.recorder_removed 
+2026-09-09 15:36:39,256 INFO [cua] handoff.end {"decision": "resume", "human_event_count": 3, "controller": "automation"}
+2026-09-09 15:36:40,073 DEBUG [cua] outcomes.clear_screen chars=373
+2026-09-09 15:36:40,095 INFO [cua] surface.shot {"ms": 21}
+2026-09-09 15:36:40,096 INFO [cua] handoff.recheck {"n": 1, "kind": "continue", "outcome": null}
+2026-09-09 15:36:40,096 INFO [cua] handoff.resolved {"n": 1, "kind": "continue"}
+2026-09-09 15:36:40,097 INFO [cua] handoff.resolved {"next_step": "continue_replay"}
+2026-09-09 15:36:40,097 INFO [cua] run.event {"step": 6, "step_id": "s6", "action": "click", "value": ""}
+2026-09-09 15:36:40,097 INFO [cua] surface.replay_step {"step_id": "s6", "action": "click", "frame": "main"}
+2026-09-09 15:36:40,097 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:40,098 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:40,098 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:40,098 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:40,098 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:40,098 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:40,098 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:40,098 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:40,098 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:40,098 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:40,098 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:40,098 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/inquiry/address-ack
+2026-09-09 15:36:40,098 DEBUG [cua] policy.path_ok path=/inquiry/address-ack
+2026-09-09 15:36:40,098 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/inquiry/address-ack
+2026-09-09 15:36:40,240 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:40,240 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:40,241 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:40,241 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:40,241 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:40,241 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:40,241 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:40,241 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:40,241 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:40,242 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:40,242 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:40,242 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/open?
+2026-09-09 15:36:40,242 DEBUG [cua] policy.path_ok path=/open
+2026-09-09 15:36:40,242 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/open?
+2026-09-09 15:36:41,057 DEBUG [cua] outcomes.clear_screen chars=310
+2026-09-09 15:36:41,058 DEBUG [cua] run.save_step index=6 bytes=0
+2026-09-09 15:36:41,058 INFO [cua] run.event {"step": 7, "step_id": "s7", "action": "click", "value": ""}
+2026-09-09 15:36:41,058 INFO [cua] surface.replay_step {"step_id": "s7", "action": "click", "frame": "main"}
+2026-09-09 15:36:41,059 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:41,059 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:41,059 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:41,059 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:41,059 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:41,059 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:41,059 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:41,059 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:41,059 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:41,060 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:41,060 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:41,060 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/open?
+2026-09-09 15:36:41,060 DEBUG [cua] policy.path_ok path=/open
+2026-09-09 15:36:41,060 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/open?
+2026-09-09 15:36:41,217 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:41,219 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:41,219 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:41,219 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:41,219 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:41,219 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:41,219 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:41,220 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:41,220 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:41,220 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:41,220 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:41,220 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:41,220 DEBUG [cua] policy.path_ok path=/open/ofac
+2026-09-09 15:36:41,220 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:42,035 DEBUG [cua] outcomes.clear_screen chars=440
+2026-09-09 15:36:42,037 DEBUG [cua] run.save_step index=7 bytes=0
+2026-09-09 15:36:42,037 INFO [cua] run.event {"step": 8, "step_id": "s8", "action": "select", "value": "REGULAR SHARE - SAVINGS"}
+2026-09-09 15:36:42,037 INFO [cua] surface.replay_step {"step_id": "s8", "action": "select", "frame": "main"}
+2026-09-09 15:36:42,038 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:42,038 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:42,038 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:42,038 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:42,038 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:42,038 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:42,038 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:42,038 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:42,038 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:42,039 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:42,039 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:42,039 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:42,039 DEBUG [cua] policy.path_ok path=/open/ofac
+2026-09-09 15:36:42,039 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:42,177 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:42,178 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:42,178 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:42,178 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:42,178 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:42,178 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:42,178 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:42,178 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:42,178 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:42,178 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:42,179 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:42,179 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:42,179 DEBUG [cua] policy.path_ok path=/open/ofac
+2026-09-09 15:36:42,179 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:42,988 DEBUG [cua] outcomes.clear_screen chars=440
+2026-09-09 15:36:42,989 DEBUG [cua] run.save_step index=8 bytes=0
+2026-09-09 15:36:42,989 INFO [cua] run.event {"step": 9, "step_id": "s9", "action": "fill", "value": "25.00"}
+2026-09-09 15:36:42,990 INFO [cua] surface.replay_step {"step_id": "s9", "action": "fill", "frame": "main"}
+2026-09-09 15:36:42,990 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:42,990 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:42,990 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:42,991 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:42,991 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:42,991 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:42,991 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:42,991 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:42,991 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:42,991 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:42,991 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:42,991 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:42,992 DEBUG [cua] policy.path_ok path=/open/ofac
+2026-09-09 15:36:42,992 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:43,126 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:43,127 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:43,127 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:43,128 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:43,128 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:43,128 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:43,128 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:43,128 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:43,128 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:43,128 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:43,128 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:43,128 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:43,128 DEBUG [cua] policy.path_ok path=/open/ofac
+2026-09-09 15:36:43,128 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:43,937 DEBUG [cua] outcomes.clear_screen chars=440
+2026-09-09 15:36:43,938 DEBUG [cua] run.save_step index=9 bytes=0
+2026-09-09 15:36:43,939 INFO [cua] run.event {"step": 10, "step_id": "s10", "action": "click", "value": ""}
+2026-09-09 15:36:43,939 INFO [cua] surface.replay_step {"step_id": "s10", "action": "click", "frame": "main"}
+2026-09-09 15:36:43,939 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:43,939 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:43,939 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:43,940 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:43,940 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:43,940 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:43,940 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:43,940 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:43,940 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:43,940 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:43,940 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:43,940 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:43,940 DEBUG [cua] policy.path_ok path=/open/ofac
+2026-09-09 15:36:43,941 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/open/ofac
+2026-09-09 15:36:44,090 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:44,091 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:44,091 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:44,091 DEBUG [cua] policy.path_ok path=/console
+2026-09-09 15:36:44,091 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/console
+2026-09-09 15:36:44,091 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:44,091 DEBUG [cua] policy.path_ok path=/frame/menu
+2026-09-09 15:36:44,091 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/menu
+2026-09-09 15:36:44,091 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:44,091 DEBUG [cua] policy.path_ok path=/frame/banner
+2026-09-09 15:36:44,091 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/frame/banner
+2026-09-09 15:36:44,092 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/open
+2026-09-09 15:36:44,092 DEBUG [cua] policy.path_ok path=/open
+2026-09-09 15:36:44,092 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/open
+2026-09-09 15:36:44,092 DEBUG [cua] policy.origin_ok url=http://127.0.0.1:7878/print/spool?t=HCU%20SPOOL%20%20HCU-CICS2%20%20CONF%20CUS-44191%20%20MEM%2077777%20%20NEW%2080-77777-02%20%20SAVINGS%20%20BAL%2025.00
+2026-09-09 15:36:44,092 DEBUG [cua] policy.path_ok path=/print/spool
+2026-09-09 15:36:44,092 DEBUG [cua] policy.frame_ok url=http://127.0.0.1:7878/print/spool?t=HCU%20SPOOL%20%20HCU-CICS2%20%20CONF%20CUS-44191%20%20MEM%2077777%20%20NEW%2080-77777-02%20%20SAVINGS%20%20BAL%2025.00
+2026-09-09 15:36:44,916 DEBUG [cua] outcomes.clear_screen chars=465
+2026-09-09 15:36:44,927 INFO [cua] surface.shot {"ms": 8}
+2026-09-09 15:36:44,928 DEBUG [cua] run.save_step index=10 bytes=29844
+2026-09-09 15:36:44,929 INFO [cua] replay.success {"outputs": {"member_name": "MARIA L SANTOS", "savings_balance": "640.12", "new_account_number": "80-77777-02", "confirmation_code": "CUS-44191", "product": "REGULAR SHARE / SAVINGS", "opening_deposit": "25.00"}}
+2026-09-09 15:36:44,929 INFO [cua] run.finish {"status": "success", "outcome": "opened_subaccount", "step_id": "s10", "reason": "Checkpoint matched. Capability completed without the LLM."}
+2026-09-09 15:36:44,930 INFO [cua] cli.finish {"status": "success", "outcome": "opened_subaccount", "run_dir": "/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T203632Z"}

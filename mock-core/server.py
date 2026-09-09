@@ -325,14 +325,27 @@ def menu_page() -> bytes:
 <div class="menu">
   <a href="/inquiry" target="main">Member Inquiry</a>
   <a href="/open" target="main">Open Sub-Account</a>
-  <a href="/inquiry" target="main" class="dead">Batch Reports</a>
-  <a href="/inquiry" target="main" class="dead">Wire Transfer</a>
+  <a href="/wire" target="main">Wire Transfer</a>
+  <a href="/gl-override" target="main">GL Override</a>
   <a href="/training/reset" target="main">Reset Training Data</a>
   <a href="/logout" target="_top">Log Off</a>
 </div>
 <p class="ftr">PF5 Inquire<br>PF9 Open<br>Clear Logoff</p>
 """
     return shell("menu", body)
+
+
+def out_of_scope_page(title: str, program: str) -> bytes:
+    body = f"""
+<div class="err">
+  <b>FUNCTION {esc(program)}</b><br>
+  This program is on the host but is not part of member servicing.<br>
+  The computer-use allowlist must refuse to drive this screen.
+</div>
+<p class="ftr">A human operator can still open this page in the browser. The agent cannot act here.</p>
+<p><a href="/inquiry" target="main">Return to inquiry</a></p>
+"""
+    return shell(title, body)
 
 
 def banner_page(sess: dict) -> bytes:
@@ -632,6 +645,14 @@ class Handler(BaseHTTPRequestHandler):
             return
         if path == "/open":
             self._render_open(sess)
+            return
+        if path == "/wire":
+            LOG.info("wire screen (out of agent allowlist)")
+            self._send(200, out_of_scope_page("Wire Transfer", "WIRE-XFER"))
+            return
+        if path == "/gl-override":
+            LOG.info("gl-override screen (out of agent allowlist)")
+            self._send(200, out_of_scope_page("GL Override", "GL-OVR"))
             return
         if path == "/training/reset":
             reset_world()

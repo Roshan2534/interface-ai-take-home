@@ -20,7 +20,7 @@ Discovery needs **one** key in `.env`:
 - `ANTHROPIC_API_KEY` (Claude)
 - `GEMINI_API_KEY`
 
-If several are set, OpenAI wins unless you set `LLM_PROVIDER` or pass `--provider`. Optional `LLM_MODEL` overrides the default (`gpt-4o`, `claude-sonnet-4-5`, `gemini-2.5-flash`).
+If several are set, OpenAI wins unless you set `LLM_PROVIDER` or pass `--provider`. Optional `LLM_MODEL` overrides the default (`gpt-6-astra`, `claude-sonnet-5`, `gemini-3.8-flash`).
 
 Mock operator: `TELLER01` / `train`. The CLI starts `mock-core/server.py` on `http://127.0.0.1:7878/` if `/health` is down. You do not need a second terminal.
 
@@ -114,6 +114,24 @@ Every command writes stderr plus, once a run directory exists:
 
 Events are named `module.verb` (`replay.start`, `handoff.start`, `surface.act`, `llm.request`, …). Secrets are redacted. Future work should keep calling `log_event()` from `cua.log` rather than `print`.
 
+## Safety allowlist
+
+The agent may only drive `http://127.0.0.1:7878/` (the `--target` origin). It may only `click`, `fill`, `select`, `press`, and `wait`.
+
+On that host, routes are allowlisted too. Member servicing (`/inquiry`, `/open`, frames, login) is allowed. The mock menu also has two real programs the agent **must not** drive:
+
+- `/wire` — Wire Transfer
+- `/gl-override` — GL Override
+
+A person can open those in the browser. If the agent lands there, the next action is refused (`policy.denied_path`). Configure in `.env`:
+
+```
+CUA_ALLOWED_PATH_PREFIXES=/health,/login,/console,/frame,/inquiry,/open,/training,/logout,/timeout,/print
+CUA_DENIED_PATH_PREFIXES=/wire,/gl-override
+```
+
+**SUBMIT OPEN** still runs automatically on replay and is logged as risky. The irreversible click is allowed because the capability was already recorded; discovery/HITL covers unknown screens.
+
 ## Without live LLM / extra services
 
 Replay and smoke do not call an LLM. They still need the local mock (auto-started) and Chromium.
@@ -132,12 +150,24 @@ Curated pack (what to read in the repo):
 
 | Path | What |
 |---|---|
+| `REPORT.md` | design write-up (required headings) |
 | `evidence/artifacts/hcu-open-savings-subaccount.json` | capability artifact |
-| `evidence/discovery/` | GPT-4o discovery run |
+| `evidence/discovery/` | OpenAI `gpt-6-astra` discovery run |
 | `evidence/replay/` | replay success, member `10001` |
 | `evidence/replay-not-found/` | replay CIF miss, member `99999` |
 | `evidence/handoff/` | replay HITL, member `77777`, `--handoff simulate` |
+| `evidence/demo/replay-tour.webm` | screen recording: replay `10001`, CIF miss `99999`, HITL `77777` |
 
 Raw traces also land in `evidence/runs/` locally; that folder is gitignored.
+
+Re-record the video (no LLM):
+
+```bash
+python3 -m cua record-demo
+```
+
+`--headed` and `record-demo` outline the control in yellow and pause so you can see the click. Headless replay without `--record` stays fast. Override with `CUA_PACE_MS` / `CUA_HIGHLIGHT_MS`.
+
+Or add `--record` to any other command (`discover`, `replay`, `smoke`).
 
 Happy path on screen: sign on → inquire `12345` → savings `4,250.18` → OFAC Continue → Submit Open → **SUB-ACCOUNT OPENED**.

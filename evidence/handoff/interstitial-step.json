@@ -20,11 +20,11 @@
       }
     ],
     "value_from": null,
-    "literal": "",
-    "key": "optional",
+    "literal": null,
+    "key": null,
     "wait_ms": null,
-    "notes": "I need to inquire about member 12345."
+    "notes": "Retrieve the member's name and savings balance."
   },
   "url": "http://127.0.0.1:7878/console",
-  "screen": "\nFUNCTIONS\nMember Inquiry\nOpen Sub-Account\nBatch Reports\nWire Transfer\nReset Training Data\nLog Off\n\nPF5 Inquire\nPF9 Open\nClear Logoff\nHORIZON CU \u00a0 MEMBER SERVICING \u00a0 HCU-CICS2/PROD2 \u00a0 OP TELLER01 \u00a0 MEM -----\nHOST MESSAGE 12E\nCIF ADDRESS CHANGE PENDING FOR MEMBER 77777.\nReview is not complete. Continue only if you accept the current address of record.\n\n\n \u00a0 "
+  "screen": "\nFUNCTIONS\nMember Inquiry\nOpen Sub-Account\nWire Transfer\nGL Override\nReset Training Data\nLog Off\n\nPF5 Inquire\nPF9 Open\nClear Logoff\nHORIZON CU \u00a0 MEMBER SERVICING \u00a0 HCU-CICS2/PROD2 \u00a0 OP TELLER01 \u00a0 MEM -----\nHOST MESSAGE 12E\nCIF ADDRESS CHANGE PENDING FOR MEMBER 77777.\nReview is not complete. Continue only if you accept the current address of record.\n\n\n \u00a0 "
 }

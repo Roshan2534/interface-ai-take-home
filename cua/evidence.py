@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from cua.redact import redact_obj
-from cua.settings import RUNS_DIR
+from cua.settings import ROOT, RUNS_DIR
 
 
 class RunLog:
@@ -43,9 +43,21 @@ class RunLog:
         from cua.log import log_event
 
         log_event("run.finish", **{k: result.get(k) for k in ("status", "outcome", "step_id", "reason")})
-        self._write("result.json", redact_obj(result))
+        payload = dict(result)
+        for key in ("run_dir", "artifact_path"):
+            if payload.get(key):
+                payload[key] = _repo_rel(str(payload[key]))
+        self._write("result.json", redact_obj(payload))
 
     def _write(self, rel: str, payload: Any) -> None:
         path = self.dir / rel
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def _repo_rel(value: str) -> str:
+    path = Path(value)
+    try:
+        return str(path.resolve().relative_to(ROOT))
+    except ValueError:
+        return value

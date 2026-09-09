@@ -1,15 +1,23 @@
 {
   "status": "success",
+  "outcome": null,
   "goal": "Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.",
   "target": "http://127.0.0.1:7878/",
+  "inputs": {},
   "outputs": {
     "member_name": "JANE A OKONKWO",
     "savings_balance": "4,250.18",
     "new_account_number": "80-12345-03",
-    "confirmation_code": "CUS-44191"
+    "confirmation_code": "CUS-44191",
+    "product": "REGULAR SHARE / SAVINGS",
+    "opening_deposit": "25.00"
   },
   "error": null,
-  "steps": 9,
-  "artifact_path": "/Users/roshansaundankar/Desktop/interface ai take home/evidence/artifacts/hcu-open-savings-subaccount.json",
-  "run_dir": "/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/discover-20260909T174043Z"
+  "step_id": null,
+  "expected": null,
+  "observed": null,
+  "reason": null,
+  "steps": 11,
+  "artifact_path": "evidence/artifacts/hcu-open-savings-subaccount.json",
+  "run_dir": "evidence/runs/discover-20260909T203121Z"
 }

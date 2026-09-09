@@ -12,7 +12,7 @@ from cua.log import log_event, setup_logging
 from cua.outcomes import after_human, classify_screen, needs_handoff
 from cua.schema import AgentAction, RunResult
 from cua.settings import HANDOFF_MODE, MAX_STEPS, secrets
-from cua.surface import Surface
+from cua.surface import Surface, _squash
 
 
 def _obs_text(obs: dict[str, Any], step: int, goal: str) -> str:
@@ -52,13 +52,49 @@ def _parse_action(raw: dict[str, Any]) -> AgentAction:
     return action
 
 
+_LABEL_FIELDS = {
+    "OPERATOR ID": "OPID",
+    "PASSWORD": "PSWD",
+    "MEM NO": "MEMNO",
+    "MEMBER NO": "MEMNO",
+    "MEMBER NUMBER": "MEMNO",
+    "PROD": "PROD",
+    "PRODUCT": "PROD",
+    "DEPAMT": "DEPAMT",
+    "DEPOSIT": "DEPAMT",
+    "OPENING DEPOSIT": "DEPAMT",
+}
+
+
 def _fill_value(action: AgentAction) -> AgentAction:
     if action.secret:
         store = secrets()
         if action.secret not in store:
             raise RuntimeError(f"Unknown secret {action.secret}")
         action.text = store[action.secret]
+    if not action.field_name and action.name:
+        mapped = _LABEL_FIELDS.get(action.name.strip().upper())
+        if mapped:
+            action.field_name = mapped
     return action
+
+
+def _stable_checkpoint(raw: list[str], outputs: dict[str, str], blob: str) -> list[str]:
+    """Keep success markers, drop this-run ids so replay still works on other members."""
+    skip = [value for value in outputs.values() if value]
+    kept: list[str] = []
+    for item in raw:
+        upper = item.upper()
+        if any(value.upper() in upper for value in skip):
+            continue
+        if re.search(r"\b\d{2}-\d+", item) or re.search(r"CUS-\d+", item, re.I):
+            continue
+        kept.append(item)
+    if "SUB-ACCOUNT OPENED" in _squash(blob):
+        if not any("SUB-ACCOUNT OPENED" in item.upper() for item in kept):
+            kept.insert(0, "SUB-ACCOUNT OPENED")
+        return kept or ["SUB-ACCOUNT OPENED"]
+    return kept or raw
 
 
 def _human_gate(
@@ -177,7 +213,6 @@ def _handoff_until_clear(
 
 def _inspect_after_human(surface: Surface, before: str | None = None):
     def inspect() -> dict[str, Any]:
-        obs = surface.observe()
         blob = surface.visible_text()
         kind, hit = after_human(blob)
         reason = hit.reason if hit else ""
@@ -197,7 +232,7 @@ def _inspect_after_human(surface: Surface, before: str | None = None):
             "kind": kind,
             "hit": hit,
             "blob": blob,
-            "screenshot": obs.get("png"),
+            "screenshot": surface.shot(),
             "reason": reason,
         }
 
@@ -210,7 +245,6 @@ def _inspect_locator_retry(surface: Surface, step, value: str | None):
             surface.replay_step(step, value)
         except Exception as exc:
             log_event("replay.retry_failed", step_id=step.id, error=str(exc))
-            obs = surface.observe()
             blob = surface.visible_text()
             kind, hit = after_human(blob)
             if kind == "blocked":
@@ -224,17 +258,16 @@ def _inspect_locator_retry(surface: Surface, step, value: str | None):
                 "kind": kind,
                 "hit": hit,
                 "blob": blob,
-                "screenshot": obs.get("png"),
+                "screenshot": surface.shot(),
                 "reason": reason,
             }
-        obs = surface.observe()
         blob = surface.visible_text()
         kind, hit = after_human(blob)
         return {
             "kind": kind,
             "hit": hit,
             "blob": blob,
-            "screenshot": obs.get("png"),
+            "screenshot": surface.shot(),
             "reason": hit.reason if hit else "",
         }
 
@@ -372,7 +405,6 @@ def discover(
             log_event("discover.stuck_repeat", step=step, name=action.name)
             if mode != "off":
                 before = surface.visible_text()
-                obs = surface.observe()
                 recovered = _handoff_until_clear(
                     control,
                     mode,
@@ -380,7 +412,7 @@ def discover(
                     step_id=f"s{step}",
                     reason="Agent repeated the same control without the screen changing",
                     observed=before[:800],
-                    screenshot=obs.get("png"),
+                    screenshot=surface.shot(),
                     inspect=_inspect_after_human(surface, before),
                 )
                 if recovered["kind"] in {"abort", "exhausted"}:
@@ -415,7 +447,6 @@ def discover(
             log_event("discover.agent_fail", step=step, error=action.error or action.thought)
             if mode != "off":
                 before = surface.visible_text()
-                obs = surface.observe()
                 recovered = _handoff_until_clear(
                     control,
                     mode,
@@ -423,7 +454,7 @@ def discover(
                     step_id=f"s{step}",
                     reason=action.error or action.thought or "agent failed",
                     observed=before[:800],
-                    screenshot=obs.get("png"),
+                    screenshot=surface.shot(),
                     inspect=_inspect_after_human(surface, before),
                 )
                 if recovered["kind"] == "continue":
@@ -456,12 +487,15 @@ def discover(
 
         if action.action == "done":
             outputs = action.outputs
-            checkpoint = action.checkpoint or list(outputs.values())
             checkpoint_frame = action.frame or "main"
+            blob = surface.visible_text()
+            checkpoint = _stable_checkpoint(
+                action.checkpoint or list(outputs.values()),
+                outputs,
+                blob,
+            )
             if checkpoint and not surface.checkpoint(checkpoint_frame, checkpoint):
-                # Fall back to scanning every frame before failing.
-                blob = surface.visible_text().upper()
-                if not all(item.upper() in blob for item in checkpoint):
+                if not all(_squash(item) in _squash(blob) for item in checkpoint):
                     result = RunResult(
                         status="failed",
                         goal=goal,
@@ -558,12 +592,17 @@ def replay(
             surface.replay_step(step, value)
         except Exception as exc:
             log_event("replay.step_exception", step_id=step.id, error=str(exc))
-            obs = surface.observe()
             blob = surface.visible_text()
+            shot = surface.shot()
             log.save_step(
                 index,
-                {"step": step.model_dump(), "url": obs["url"], "error": str(exc), "screen": blob[:2000]},
-                obs["png"],
+                {
+                    "step": step.model_dump(),
+                    "url": surface.page.url,
+                    "error": str(exc),
+                    "screen": blob[:2000],
+                },
+                shot,
             )
             if mode == "off":
                 hit = classify_screen(blob)
@@ -587,7 +626,7 @@ def replay(
                 step_id=step.id,
                 reason=f"Locator failed at {step.id}: {exc}",
                 observed=blob[:800],
-                screenshot=obs.get("png"),
+                screenshot=shot,
                 inspect=_inspect_locator_retry(surface, step, value),
             )
             if recovered["kind"] == "continue":
@@ -606,19 +645,19 @@ def replay(
                 log.finish(result.model_dump())
                 return result
 
-        obs = surface.observe()
         blob = surface.visible_text()
         last_blob = blob
+        hit = classify_screen(blob)
+        shot = surface.shot() if (hit or index == len(capability.steps)) else None
         log.save_step(
             index,
             {
                 "step": step.model_dump(),
-                "url": obs["url"],
+                "url": surface.page.url,
                 "screen": blob[:2000],
             },
-            obs["png"],
+            shot,
         )
-        hit = classify_screen(blob)
         if hit:
             log_event("replay.classified", outcome=hit.outcome, step_id=step.id, status=hit.status)
             if needs_handoff(hit) and mode != "off":
@@ -629,7 +668,7 @@ def replay(
                     step_id=step.id,
                     reason=hit.reason,
                     observed=hit.observed,
-                    screenshot=obs.get("png"),
+                    screenshot=shot or surface.shot(),
                     inspect=_inspect_after_human(surface),
                 )
                 if recovered["kind"] == "continue":
@@ -666,7 +705,7 @@ def replay(
         ok = surface.checkpoint(capability.checkpoint.frame, texts)
         if not ok:
             blob = last_blob or surface.visible_text()
-            ok = all(item.upper() in blob.upper() for item in texts)
+            ok = all(_squash(item) in _squash(blob) for item in texts)
     if ok:
         blob = last_blob or surface.visible_text()
         outputs = {field.name: _guess_output(field.name, blob) for field in capability.outputs}
@@ -761,6 +800,12 @@ def _guess_output(name: str, blob: str) -> str:
             return match.group(1)
         ids = re.findall(r"80-\d+-\d+", flat)
         return ids[-1] if ids else ""
+    if name in {"product"}:
+        match = re.search(r"PRODUCT\s+(.+?)(?:\s+OPENING BAL|\s+SAVINGS BAL|$)", flat)
+        return match.group(1).strip() if match else ""
+    if name in {"opening_deposit", "deposit", "opening_bal"}:
+        match = re.search(r"OPENING BAL(?:ANCE)?\s+([\d,]+\.\d{2})", flat)
+        return match.group(1) if match else ""
     if "saving" in name.lower():
         match = re.search(r"SAVINGS BAL(?:ANCE)?\s+([\d,]+\.\d{2})", flat)
         return match.group(1) if match else ""
@@ -794,8 +839,6 @@ def smoke(goal: str, target: str, surface: Surface) -> RunResult:
     recorded: list[AgentAction] = []
     for index, raw in enumerate(SMOKE_ACTIONS, start=1):
         action = _fill_value(raw.model_copy())
-        obs = surface.observe()
-        log.save_step(index, {"action": action.model_dump()}, obs["png"])
         print(
             f"smoke {index}/{len(SMOKE_ACTIONS)} {action.action} "
             f"{action.field_name or action.name or ''}",
@@ -803,8 +846,9 @@ def smoke(goal: str, target: str, surface: Surface) -> RunResult:
         )
         surface.act(action)
         recorded.append(action)
-    obs = surface.observe()
+        log.save_step(index, {"action": action.model_dump()}, None)
     blob = surface.visible_text()
+    log.save_step(len(SMOKE_ACTIONS), {"screen": blob[:2000]}, surface.shot())
     if "SUB-ACCOUNT OPENED" not in blob:
         result = RunResult(
             status="failed",

@@ -10,14 +10,16 @@
     "member_name": "MARIA L SANTOS",
     "savings_balance": "640.12",
     "new_account_number": "80-77777-02",
-    "confirmation_code": "CUS-44191"
+    "confirmation_code": "CUS-44191",
+    "product": "REGULAR SHARE / SAVINGS",
+    "opening_deposit": "25.00"
   },
   "error": null,
-  "step_id": "s8",
+  "step_id": "s10",
   "expected": "SUB-ACCOUNT OPENED",
-  "observed": "FUNCTIONS Member Inquiry Open Sub-Account Batch Reports Wire Transfer Reset Training Data Log Off PF5 Inquire PF9 Open Clear Logoff HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM ----- SUB-ACCOUNT OPENED MEMBER 77777 MARIA L SANTOS NEW ACCT 80-77777-02 PRODUCT REGULAR SHARE / SAVINGS OPENING BAL 25.00 SAVINGS BAL 640.12 CONFIRMATION CUS-44191 HOST PRINT PREVIEW New inquiry HCU SPOOL H",
+  "observed": "FUNCTIONS Member Inquiry Open Sub-Account Wire Transfer GL Override Reset Training Data Log Off PF5 Inquire PF9 Open Clear Logoff HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM ----- SUB-ACCOUNT OPENED MEMBER 77777 MARIA L SANTOS NEW ACCT 80-77777-02 PRODUCT REGULAR SHARE / SAVINGS OPENING BAL 25.00 SAVINGS BAL 640.12 CONFIRMATION CUS-44191 HOST PRINT PREVIEW New inquiry HCU SPOOL HCU",
   "reason": "Checkpoint matched. Capability completed without the LLM.",
-  "steps": 8,
+  "steps": 10,
   "artifact_path": null,
-  "run_dir": "/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T190448Z"
+  "run_dir": "evidence/runs/replay-20260909T203632Z"
 }

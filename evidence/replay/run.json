@@ -2,5 +2,5 @@
   "kind": "replay",
   "goal": "Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.",
   "target": "http://127.0.0.1:7878/",
-  "started_at": "20260909T174917Z"
+  "started_at": "20260909T203613Z"
 }
