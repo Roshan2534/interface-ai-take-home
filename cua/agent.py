@@ -6,10 +6,12 @@ from typing import Any
 
 from cua.artifact import build_capability, save_capability
 from cua.evidence import RunLog
+from cua.handoff import SessionControl, _exhausted_message
 from cua.llm import complete, resolve_llm
-from cua.outcomes import classify_screen
+from cua.log import log_event, setup_logging
+from cua.outcomes import after_human, classify_screen, needs_handoff
 from cua.schema import AgentAction, RunResult
-from cua.settings import MAX_STEPS, secrets
+from cua.settings import HANDOFF_MODE, MAX_STEPS, secrets
 from cua.surface import Surface
 
 
@@ -59,12 +61,252 @@ def _fill_value(action: AgentAction) -> AgentAction:
     return action
 
 
+def _human_gate(
+    control: SessionControl,
+    mode: str,
+    *,
+    reason: str,
+    goal: str,
+    step_id: str | None,
+    observed: str,
+    screenshot: bytes | None,
+    attempt: int = 1,
+    restated: bool = False,
+) -> str:
+    log_event(
+        "handoff.gate",
+        mode=mode,
+        reason=reason,
+        step_id=step_id,
+        attempt=attempt,
+        restated=restated,
+    )
+    if mode == "off":
+        log_event("handoff.skipped", reason=reason, mode="off")
+        return "abort"
+    return control.escalate(
+        reason=reason,
+        goal=goal,
+        step_id=step_id,
+        observed=observed,
+        screenshot=screenshot,
+        attempt=attempt,
+        max_attempts=control.max_attempts,
+        restated=restated,
+    )
+
+
+def _handoff_until_clear(
+    control: SessionControl,
+    mode: str,
+    *,
+    goal: str,
+    step_id: str | None,
+    reason: str,
+    observed: str,
+    screenshot: bytes | None,
+    inspect,
+) -> dict[str, Any]:
+    """Hand off up to control.max_attempts times, then abort if still unknown.
+
+    inspect() must return {kind, hit, blob, screenshot, reason} where kind is
+    continue | known_stop | blocked.
+    """
+    limit = control.max_attempts
+    current_reason = reason
+    current_observed = observed
+    current_shot = screenshot
+    restated = False
+    while True:
+        control.blocked_passes += 1
+        n = control.blocked_passes
+        log_event(
+            "handoff.attempt",
+            n=n,
+            max=limit,
+            restated=restated,
+            reason=current_reason,
+        )
+        if n > limit:
+            log_event("handoff.exhausted", n=n, max=limit, reason=current_reason)
+            print(
+                _exhausted_message(
+                    reason=current_reason,
+                    observed=current_observed,
+                    max_attempts=limit,
+                ),
+                flush=True,
+            )
+            return {
+                "kind": "exhausted",
+                "hit": None,
+                "blob": current_observed,
+                "reason": current_reason,
+            }
+        decision = _human_gate(
+            control,
+            mode,
+            reason=current_reason,
+            goal=goal,
+            step_id=step_id,
+            observed=current_observed,
+            screenshot=current_shot,
+            attempt=n,
+            restated=restated,
+        )
+        if decision == "abort":
+            log_event("handoff.operator_abort", n=n)
+            return {"kind": "abort", "hit": None, "blob": current_observed, "reason": current_reason}
+        check = inspect()
+        log_event(
+            "handoff.recheck",
+            n=n,
+            kind=check.get("kind"),
+            outcome=(check.get("hit").outcome if check.get("hit") is not None else None),
+        )
+        if check["kind"] != "blocked":
+            control.blocked_passes = 0
+            log_event("handoff.resolved", n=n, kind=check["kind"])
+            return check
+        restated = True
+        current_reason = check.get("reason") or current_reason
+        current_observed = check.get("blob") or current_observed
+        current_shot = check.get("screenshot") or current_shot
+        log_event("handoff.still_blocked", n=n, reason=current_reason)
+
+
+def _inspect_after_human(surface: Surface, before: str | None = None):
+    def inspect() -> dict[str, Any]:
+        obs = surface.observe()
+        blob = surface.visible_text()
+        kind, hit = after_human(blob)
+        reason = hit.reason if hit else ""
+        if kind == "continue" and before is not None and blob.strip() == before.strip():
+            kind = "blocked"
+            reason = (
+                "You pressed Enter without changing the screen. "
+                "The agent still cannot proceed from this page."
+            )
+            log_event("handoff.unchanged_screen")
+        elif kind == "blocked":
+            reason = (
+                hit.reason
+                + " The screen after you pressed Enter is still not one this capability recorded."
+            )
+        return {
+            "kind": kind,
+            "hit": hit,
+            "blob": blob,
+            "screenshot": obs.get("png"),
+            "reason": reason,
+        }
+
+    return inspect
+
+
+def _inspect_locator_retry(surface: Surface, step, value: str | None):
+    def inspect() -> dict[str, Any]:
+        try:
+            surface.replay_step(step, value)
+        except Exception as exc:
+            log_event("replay.retry_failed", step_id=step.id, error=str(exc))
+            obs = surface.observe()
+            blob = surface.visible_text()
+            kind, hit = after_human(blob)
+            if kind == "blocked":
+                reason = hit.reason if hit else str(exc)
+            else:
+                kind = "blocked"
+                reason = (
+                    f"Locator still failing at {step.id} after you pressed Enter: {exc}"
+                )
+            return {
+                "kind": kind,
+                "hit": hit,
+                "blob": blob,
+                "screenshot": obs.get("png"),
+                "reason": reason,
+            }
+        obs = surface.observe()
+        blob = surface.visible_text()
+        kind, hit = after_human(blob)
+        return {
+            "kind": kind,
+            "hit": hit,
+            "blob": blob,
+            "screenshot": obs.get("png"),
+            "reason": hit.reason if hit else "",
+        }
+
+    return inspect
+
+
+def _result_from_recovery(
+    recovered: dict[str, Any],
+    capability,
+    target: str,
+    inputs: dict[str, str],
+    *,
+    step_id: str | None,
+    steps: int,
+    run_dir: str,
+    fallback_error: str | None = None,
+) -> RunResult:
+    kind = recovered.get("kind")
+    blob = recovered.get("blob") or ""
+    hit = recovered.get("hit")
+    if kind == "known_stop" and hit is not None:
+        return _replay_stop(
+            capability,
+            target,
+            inputs,
+            step_id=step_id,
+            steps=steps,
+            run_dir=run_dir,
+            hit=hit,
+            observed=blob,
+        )
+    outcome = "handoff_exhausted" if kind == "exhausted" else "handoff_abort"
+    reason = recovered.get("reason") or fallback_error or "Handoff did not unblock the agent"
+    return RunResult(
+        status="failed",
+        outcome=outcome,
+        goal=capability.description,
+        target=target,
+        inputs=inputs,
+        error=reason,
+        step_id=step_id,
+        expected="A host screen this capability already recorded",
+        observed=_clip_obs(blob) if blob else None,
+        reason=reason,
+        steps=steps,
+        run_dir=run_dir,
+    )
+
+
 def discover(
-    goal: str, target: str, surface: Surface, provider: str | None = None
+    goal: str,
+    target: str,
+    surface: Surface,
+    provider: str | None = None,
+    handoff_mode: str | None = None,
+    handoff_max: int | None = None,
 ) -> RunResult:
     cfg = resolve_llm(provider)
     print(f"Using {cfg.provider} / {cfg.model}", flush=True)
     log = RunLog(goal, target, kind="discover")
+    setup_logging(log.dir)
+    mode = handoff_mode or HANDOFF_MODE
+    control = SessionControl(surface, log.dir, mode=mode, max_attempts=handoff_max)
+    log_event(
+        "discover.start",
+        goal=goal,
+        target=target,
+        provider=cfg.provider,
+        handoff=mode,
+        handoff_max=control.max_attempts,
+    )
+    log_event("run.dir", path=str(log.dir), kind="discover")
     surface.goto(target)
     recorded: list[AgentAction] = []
     history: list[dict[str, Any]] = []
@@ -127,6 +369,34 @@ def discover(
         else:
             repeats = 0
         if repeats >= 2:
+            log_event("discover.stuck_repeat", step=step, name=action.name)
+            if mode != "off":
+                before = surface.visible_text()
+                obs = surface.observe()
+                recovered = _handoff_until_clear(
+                    control,
+                    mode,
+                    goal=goal,
+                    step_id=f"s{step}",
+                    reason="Agent repeated the same control without the screen changing",
+                    observed=before[:800],
+                    screenshot=obs.get("png"),
+                    inspect=_inspect_after_human(surface, before),
+                )
+                if recovered["kind"] in {"abort", "exhausted"}:
+                    result = RunResult(
+                        status="failed",
+                        outcome="handoff_exhausted"
+                        if recovered["kind"] == "exhausted"
+                        else "handoff_abort",
+                        goal=goal,
+                        target=target,
+                        error=recovered.get("reason") or "Operator aborted after stuck loop",
+                        steps=step,
+                        run_dir=str(log.dir),
+                    )
+                    log.finish(result.model_dump())
+                    return result
             history.append(
                 {
                     "role": "user",
@@ -142,6 +412,37 @@ def discover(
             continue
 
         if action.action == "fail":
+            log_event("discover.agent_fail", step=step, error=action.error or action.thought)
+            if mode != "off":
+                before = surface.visible_text()
+                obs = surface.observe()
+                recovered = _handoff_until_clear(
+                    control,
+                    mode,
+                    goal=goal,
+                    step_id=f"s{step}",
+                    reason=action.error or action.thought or "agent failed",
+                    observed=before[:800],
+                    screenshot=obs.get("png"),
+                    inspect=_inspect_after_human(surface, before),
+                )
+                if recovered["kind"] == "continue":
+                    log_event("discover.fail_resumed")
+                    continue
+                if recovered["kind"] in {"abort", "exhausted"}:
+                    result = RunResult(
+                        status="failed",
+                        outcome="handoff_exhausted"
+                        if recovered["kind"] == "exhausted"
+                        else "handoff_abort",
+                        goal=goal,
+                        target=target,
+                        error=recovered.get("reason") or action.error or "agent failed",
+                        steps=step,
+                        run_dir=str(log.dir),
+                    )
+                    log.finish(result.model_dump())
+                    return result
             result = RunResult(
                 status="failed",
                 goal=goal,
@@ -181,6 +482,7 @@ def discover(
                 checkpoint_frame=checkpoint_frame,
             )
             path = save_capability(capability)
+            log_event("discover.done", artifact=str(path), outputs=outputs)
             result = RunResult(
                 status="success",
                 goal=goal,
@@ -195,6 +497,7 @@ def discover(
 
         surface.act(action)
         recorded.append(action)
+        control.blocked_passes = 0
 
     result = RunResult(
         status="failed",
@@ -204,6 +507,7 @@ def discover(
         steps=MAX_STEPS,
         run_dir=str(log.dir),
     )
+    log_event("discover.max_steps", steps=MAX_STEPS)
     log.finish(result.model_dump())
     return result
 
@@ -222,8 +526,26 @@ def _step_value(step, inputs: dict[str, str], defaults: dict[str, str]) -> str |
     return step.literal
 
 
-def replay(capability, target: str, inputs: dict[str, str], surface: Surface) -> RunResult:
+def replay(
+    capability,
+    target: str,
+    inputs: dict[str, str],
+    surface: Surface,
+    handoff_mode: str | None = None,
+    handoff_max: int | None = None,
+) -> RunResult:
     log = RunLog(capability.description, target, kind="replay")
+    setup_logging(log.dir)
+    mode = handoff_mode or HANDOFF_MODE
+    control = SessionControl(surface, log.dir, mode=mode, max_attempts=handoff_max)
+    log_event(
+        "replay.start",
+        target=target,
+        inputs=inputs,
+        handoff=mode,
+        handoff_max=control.max_attempts,
+    )
+    log_event("run.dir", path=str(log.dir), kind="replay")
     surface.goto(target)
     defaults = {field.name: field.default or "" for field in capability.inputs}
     last_blob = ""
@@ -235,6 +557,7 @@ def replay(capability, target: str, inputs: dict[str, str], surface: Surface) ->
         try:
             surface.replay_step(step, value)
         except Exception as exc:
+            log_event("replay.step_exception", step_id=step.id, error=str(exc))
             obs = surface.observe()
             blob = surface.visible_text()
             log.save_step(
@@ -242,20 +565,46 @@ def replay(capability, target: str, inputs: dict[str, str], surface: Surface) ->
                 {"step": step.model_dump(), "url": obs["url"], "error": str(exc), "screen": blob[:2000]},
                 obs["png"],
             )
-            hit = classify_screen(blob)
-            result = _replay_stop(
-                capability,
-                target,
-                inputs,
+            if mode == "off":
+                hit = classify_screen(blob)
+                result = _replay_stop(
+                    capability,
+                    target,
+                    inputs,
+                    step_id=step.id,
+                    steps=index,
+                    run_dir=str(log.dir),
+                    hit=hit,
+                    fallback_error=str(exc),
+                    observed=blob,
+                )
+                log.finish(result.model_dump())
+                return result
+            recovered = _handoff_until_clear(
+                control,
+                mode,
+                goal=capability.description,
                 step_id=step.id,
-                steps=index,
-                run_dir=str(log.dir),
-                hit=hit,
-                fallback_error=str(exc),
-                observed=blob,
+                reason=f"Locator failed at {step.id}: {exc}",
+                observed=blob[:800],
+                screenshot=obs.get("png"),
+                inspect=_inspect_locator_retry(surface, step, value),
             )
-            log.finish(result.model_dump())
-            return result
+            if recovered["kind"] == "continue":
+                log_event("replay.retry_after_handoff", step_id=step.id)
+            else:
+                result = _result_from_recovery(
+                    recovered,
+                    capability,
+                    target,
+                    inputs,
+                    step_id=step.id,
+                    steps=index,
+                    run_dir=str(log.dir),
+                    fallback_error=str(exc),
+                )
+                log.finish(result.model_dump())
+                return result
 
         obs = surface.observe()
         blob = surface.visible_text()
@@ -271,6 +620,33 @@ def replay(capability, target: str, inputs: dict[str, str], surface: Surface) ->
         )
         hit = classify_screen(blob)
         if hit:
+            log_event("replay.classified", outcome=hit.outcome, step_id=step.id, status=hit.status)
+            if needs_handoff(hit) and mode != "off":
+                recovered = _handoff_until_clear(
+                    control,
+                    mode,
+                    goal=capability.description,
+                    step_id=step.id,
+                    reason=hit.reason,
+                    observed=hit.observed,
+                    screenshot=obs.get("png"),
+                    inspect=_inspect_after_human(surface),
+                )
+                if recovered["kind"] == "continue":
+                    last_blob = recovered.get("blob") or surface.visible_text()
+                    log_event("handoff.resolved", next_step="continue_replay")
+                    continue
+                result = _result_from_recovery(
+                    recovered,
+                    capability,
+                    target,
+                    inputs,
+                    step_id=step.id,
+                    steps=index,
+                    run_dir=str(log.dir),
+                )
+                log.finish(result.model_dump())
+                return result
             result = _replay_stop(
                 capability,
                 target,
@@ -308,6 +684,7 @@ def replay(capability, target: str, inputs: dict[str, str], surface: Surface) ->
             steps=len(capability.steps),
             run_dir=str(log.dir),
         )
+        log_event("replay.success", outputs=outputs)
     else:
         blob = last_blob or surface.visible_text()
         hit = classify_screen(blob)
@@ -410,6 +787,9 @@ SMOKE_ACTIONS = [
 
 def smoke(goal: str, target: str, surface: Surface) -> RunResult:
     log = RunLog(goal, target, kind="smoke")
+    setup_logging(log.dir)
+    log_event("smoke.start", goal=goal, target=target)
+    log_event("run.dir", path=str(log.dir), kind="smoke")
     surface.goto(target)
     recorded: list[AgentAction] = []
     for index, raw in enumerate(SMOKE_ACTIONS, start=1):

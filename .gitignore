@@ -45,6 +45,8 @@ evidence/runs/
 !evidence/replay/**
 !evidence/replay-not-found/
 !evidence/replay-not-found/**
+!evidence/handoff/
+!evidence/handoff/**
 
 # OS / editor
 .DS_Store

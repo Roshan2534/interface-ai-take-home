@@ -40,3 +40,8 @@ def secrets() -> dict[str, str]:
 
 def env_key(name: str) -> str:
     return (os.getenv(name) or "").strip()
+
+
+HANDOFF_MODE = env_key("CUA_HANDOFF") or "wait"
+OPERATOR_PORT = int(os.getenv("CUA_OPERATOR_PORT") or "7879")
+HANDOFF_MAX_ATTEMPTS = int(os.getenv("CUA_HANDOFF_MAX_ATTEMPTS") or "2")

@@ -21,7 +21,9 @@ from __future__ import annotations
 
 import argparse
 import html
+import logging
 import secrets
+import sys
 import time
 from copy import deepcopy
 from http.cookies import SimpleCookie
@@ -30,6 +32,7 @@ from urllib.parse import parse_qs, urlparse
 
 HOST_NAME = "HCU-CICS2"
 REGION = "PROD2"
+LOG = logging.getLogger("hcu.mock")
 MIN_OPENING_DEPOSIT = 25.00
 SESSION_TTL_SEC = 45 * 60
 
@@ -551,8 +554,9 @@ class Handler(BaseHTTPRequestHandler):
     server_version = "HCUHost/1.0"
 
     def log_message(self, fmt: str, *args: object) -> None:
-        sys_stderr = __import__("sys").stderr
-        sys_stderr.write("%s - %s\n" % (self.address_string(), fmt % args))
+        line = "%s - %s" % (self.address_string(), fmt % args)
+        LOG.info(line)
+        sys.stderr.write(line + "\n")
 
     def _send(self, code: int, body: bytes, content_type: str = "text/html; charset=utf-8",
               extra_headers: list[str] | None = None, cookies: list[str] | None = None) -> None:
@@ -649,9 +653,12 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/login":
             opid = (form.get("OPID") or "").strip().upper()
             pswd = form.get("PSWD") or ""
+            LOG.info("login attempt opid=%s", opid)
             if opid != "TELLER01" or pswd != "train":
+                LOG.info("login failed opid=%s", opid)
                 self._send(200, login_page("Sign-on failed. Invalid operator or password."))
                 return
+            LOG.info("login ok opid=%s", opid)
             sid = new_session(opid)
             self._redirect("/console", cookies=set_cookie_headers(sid))
             return
@@ -662,11 +669,13 @@ class Handler(BaseHTTPRequestHandler):
 
         if path == "/inquiry":
             memno = normalize_memno(form.get("MEMNO", ""))
+            LOG.info("inquiry memno=%s", memno)
             self._render_inquiry(sess, memno)
             return
         if path == "/inquiry/address-ack":
             act = (form.get("ACT") or "").upper()
             memno = normalize_memno(form.get("MEMNO", ""))
+            LOG.info("address-ack memno=%s act=%s", memno, act)
             if "CANCEL" in act:
                 sess["member_no"] = None
                 self._send(200, inquiry_form())
@@ -675,6 +684,7 @@ class Handler(BaseHTTPRequestHandler):
             self._render_inquiry(sess, memno, skip_address=True)
             return
         if path == "/open/ofac":
+            LOG.info("ofac continue")
             sess["ofac_ack"] = True
             self._send(200, open_form(sess))
             return
@@ -702,6 +712,7 @@ class Handler(BaseHTTPRequestHandler):
             )
             return
         if member.get("needs_address_ack") and memno not in sess.get("address_ack", set()) and not skip_address:
+            LOG.info("interstitial HOST MESSAGE 12E memno=%s", memno)
             sess["member_no"] = memno
             self._send(200, address_interstitial(memno))
             return
@@ -736,6 +747,7 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         prod_code = (form.get("PROD") or "").strip()
+        LOG.info("submit open memno=%s prod=%s", memno, prod_code)
         product = next((p for p in PRODUCTS if p[0] == prod_code), None)
         if product is None:
             self._send(200, open_form(sess, error="Product is required."))
@@ -774,9 +786,14 @@ def main() -> None:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=7878)
     args = parser.parse_args()
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s [hcu.mock] %(message)s",
+    )
     httpd = ThreadingHTTPServer((args.host, args.port), Handler)
     print(f"HCU training host on http://{args.host}:{args.port}/", flush=True)
     print("Operator TELLER01 / train", flush=True)
+    LOG.info("listening http://%s:%s/", args.host, args.port)
     httpd.serve_forever()
 
 

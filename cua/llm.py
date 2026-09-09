@@ -68,6 +68,14 @@ def _provider_keys() -> dict[str, str]:
 
 
 def resolve_llm(provider: str | None = None) -> LLMConfig:
+    from cua.log import log_event
+
+    cfg = _pick_llm(provider)
+    log_event("llm.resolve", provider=cfg.provider, model=cfg.model)
+    return cfg
+
+
+def _pick_llm(provider: str | None = None) -> LLMConfig:
     keys = _provider_keys()
     requested = (provider or env_key("LLM_PROVIDER")).lower()
     if requested:
@@ -115,14 +123,19 @@ def _missing_key_message(provider: str) -> str:
 
 
 def complete(messages: list[dict[str, Any]], cfg: LLMConfig | None = None) -> dict[str, Any]:
+    from cua.log import log_event
+
     cfg = cfg or resolve_llm()
+    log_event("llm.request", provider=cfg.provider, model=cfg.model, turns=len(messages))
     if cfg.provider == "openai":
         raw = _complete_openai(cfg, messages)
     elif cfg.provider == "anthropic":
         raw = _complete_anthropic(cfg, messages)
     else:
         raw = _complete_gemini(cfg, messages)
-    return _parse_json(raw)
+    parsed = _parse_json(raw)
+    log_event("llm.response", provider=cfg.provider, action=parsed.get("action"), thought=parsed.get("thought"))
+    return parsed
 
 
 def _complete_openai(cfg: LLMConfig, messages: list[dict[str, Any]]) -> str:

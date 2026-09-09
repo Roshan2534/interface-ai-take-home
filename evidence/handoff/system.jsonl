@@ -1,0 +1,85 @@
+{"ts": 1788980688.8649988, "level": "DEBUG", "logger": "cua", "event": "logging_ready run_dir=/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T190448Z"}
+{"ts": 1788980688.865186, "level": "INFO", "logger": "cua", "event": "replay.start", "target": "http://127.0.0.1:7878/", "inputs": {"member_id": "77777"}, "handoff": "simulate"}
+{"ts": 1788980688.865283, "level": "INFO", "logger": "cua", "event": "run.dir", "path": "/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T190448Z", "kind": "replay"}
+{"ts": 1788980688.865373, "level": "INFO", "logger": "cua", "event": "control.init", "controller": "automation", "mode": "simulate", "desk_port": 7879}
+{"ts": 1788980688.8654468, "level": "INFO", "logger": "cua", "event": "surface.goto", "url": "http://127.0.0.1:7878/"}
+{"ts": 1788980688.865547, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/"}
+{"ts": 1788980688.874722, "level": "INFO", "logger": "cua", "event": "run.event", "step": 1, "step_id": "s1", "action": "fill", "value": "[secret]"}
+{"ts": 1788980688.875075, "level": "INFO", "logger": "cua", "event": "surface.replay_step", "step_id": "s1", "action": "fill", "frame": "root"}
+{"ts": 1788980691.406882, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/"}
+{"ts": 1788980691.4078028, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/"}
+{"ts": 1788980691.4080808, "level": "DEBUG", "logger": "cua", "event": "surface.observe url=http://127.0.0.1:7878/"}
+{"ts": 1788980691.447882, "level": "DEBUG", "logger": "cua", "event": "run.save_step index=1 bytes=15810"}
+{"ts": 1788980691.4531798, "level": "DEBUG", "logger": "cua", "event": "outcomes.clear_screen chars=187"}
+{"ts": 1788980691.4533892, "level": "INFO", "logger": "cua", "event": "run.event", "step": 2, "step_id": "s2", "action": "fill", "value": "[secret]"}
+{"ts": 1788980691.453614, "level": "INFO", "logger": "cua", "event": "surface.replay_step", "step_id": "s2", "action": "fill", "frame": "root"}
+{"ts": 1788980693.994553, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/"}
+{"ts": 1788980693.99532, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/"}
+{"ts": 1788980693.99552, "level": "DEBUG", "logger": "cua", "event": "surface.observe url=http://127.0.0.1:7878/"}
+{"ts": 1788980694.023306, "level": "DEBUG", "logger": "cua", "event": "run.save_step index=2 bytes=16140"}
+{"ts": 1788980694.0236921, "level": "DEBUG", "logger": "cua", "event": "outcomes.clear_screen chars=187"}
+{"ts": 1788980694.0238268, "level": "INFO", "logger": "cua", "event": "run.event", "step": 3, "step_id": "s3", "action": "click", "value": ""}
+{"ts": 1788980694.024043, "level": "INFO", "logger": "cua", "event": "surface.replay_step", "step_id": "s3", "action": "click", "frame": "root"}
+{"ts": 1788980694.562173, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980694.5627809, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980694.563002, "level": "DEBUG", "logger": "cua", "event": "surface.observe url=http://127.0.0.1:7878/console"}
+{"ts": 1788980718.655502, "level": "DEBUG", "logger": "cua", "event": "run.save_step index=3 bytes=23180"}
+{"ts": 1788980718.655874, "level": "DEBUG", "logger": "cua", "event": "outcomes.clear_screen chars=356"}
+{"ts": 1788980718.656001, "level": "INFO", "logger": "cua", "event": "run.event", "step": 4, "step_id": "s4", "action": "fill", "value": "77777"}
+{"ts": 1788980718.656239, "level": "INFO", "logger": "cua", "event": "surface.replay_step", "step_id": "s4", "action": "fill", "frame": "main"}
+{"ts": 1788980719.1746418, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980719.174985, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980719.175248, "level": "DEBUG", "logger": "cua", "event": "surface.observe url=http://127.0.0.1:7878/console"}
+{"ts": 1788980743.221181, "level": "DEBUG", "logger": "cua", "event": "run.save_step index=4 bytes=23435"}
+{"ts": 1788980743.221838, "level": "DEBUG", "logger": "cua", "event": "outcomes.clear_screen chars=356"}
+{"ts": 1788980743.2221608, "level": "INFO", "logger": "cua", "event": "run.event", "step": 5, "step_id": "s5", "action": "click", "value": ""}
+{"ts": 1788980743.2230148, "level": "INFO", "logger": "cua", "event": "surface.replay_step", "step_id": "s5", "action": "click", "frame": "main"}
+{"ts": 1788980743.748964, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980743.749653, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980743.74989, "level": "DEBUG", "logger": "cua", "event": "surface.observe url=http://127.0.0.1:7878/console"}
+{"ts": 1788980767.811284, "level": "DEBUG", "logger": "cua", "event": "run.save_step index=5 bytes=24241"}
+{"ts": 1788980767.812364, "level": "INFO", "logger": "cua", "event": "outcomes.classified", "outcome": "unexpected_dialog", "status": "failed", "handoff": true}
+{"ts": 1788980767.8128908, "level": "INFO", "logger": "cua", "event": "replay.classified", "outcome": "unexpected_dialog", "step_id": "s5", "status": "failed"}
+{"ts": 1788980767.81319, "level": "INFO", "logger": "cua", "event": "handoff.gate", "mode": "simulate", "reason": "Recoverable host interstitial that this capability did not record. Stop rather than clicking through an unknown dialog.", "step_id": "s5"}
+{"ts": "2026-09-09T19:06:07.813649+00:00", "level": "INFO", "logger": "cua", "event": "handoff.start", "reason": "Recoverable host interstitial that this capability did not record. Stop rather than clicking through an unknown dialog.", "goal": "Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.", "step_id": "s5", "observed": "FUNCTIONS Member Inquiry Open Sub-Account Batch Reports Wire Transfer Reset Training Data Log Off PF5 Inquire PF9 Open Clear Logoff HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM ----- HOST MESSAGE 12E CIF ADDRESS CHANGE PENDING FOR MEMBER 77777. Review is not complete. Continue only if you accept the current address of record.", "controller": "human", "live_session": "same Playwright page / Chromium instance"}
+{"ts": 1788980767.8248022, "level": "INFO", "logger": "cua", "event": "operator.desk_bound", "port": 7879}
+{"ts": 1788980767.825421, "level": "INFO", "logger": "cua", "event": "handoff.desk", "url": "http://127.0.0.1:7879/", "mode": "simulate"}
+{"ts": 1788980767.8256042, "level": "INFO", "logger": "cua", "event": "handoff.simulate", "action": "click CONTINUE on live session"}
+{"ts": 1788980767.825792, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980767.8258948, "level": "DEBUG", "logger": "cua", "event": "policy.action_ok action=click"}
+{"ts": 1788980767.825993, "level": "INFO", "logger": "cua", "event": "surface.act", "action": "click", "frame": "main", "name": "CONTINUE", "field_name": null, "risky": false}
+{"ts": 1788980767.849907, "level": "INFO", "logger": "cua", "event": "human.action", "kind": "click", "tag": "INPUT", "name": "ACT", "text": "CONTINUE"}
+{"ts": 1788980767.857333, "level": "INFO", "logger": "cua", "event": "human.navigate", "url": "http://127.0.0.1:7878/inquiry/address-ack", "frame": "main"}
+{"ts": 1788980768.3578198, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980768.827811, "level": "INFO", "logger": "cua", "event": "operator.desk_stopped"}
+{"ts": 1788980768.828854, "level": "INFO", "logger": "cua", "event": "handoff.end", "decision": "resume", "human_event_count": 3, "controller": "automation"}
+{"ts": 1788980776.846234, "level": "DEBUG", "logger": "cua", "event": "outcomes.clear_screen chars=375"}
+{"ts": 1788980776.847009, "level": "INFO", "logger": "cua", "event": "handoff.resolved", "next_step": "continue_replay"}
+{"ts": 1788980776.847307, "level": "INFO", "logger": "cua", "event": "run.event", "step": 6, "step_id": "s6", "action": "click", "value": ""}
+{"ts": 1788980776.847637, "level": "INFO", "logger": "cua", "event": "surface.replay_step", "step_id": "s6", "action": "click", "frame": "main"}
+{"ts": 1788980776.8830478, "level": "INFO", "logger": "cua", "event": "human.navigate", "url": "http://127.0.0.1:7878/open?", "frame": "main"}
+{"ts": 1788980777.38083, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980777.3819578, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980777.382261, "level": "DEBUG", "logger": "cua", "event": "surface.observe url=http://127.0.0.1:7878/console"}
+{"ts": 1788980801.435491, "level": "DEBUG", "logger": "cua", "event": "run.save_step index=6 bytes=22608"}
+{"ts": 1788980801.436168, "level": "DEBUG", "logger": "cua", "event": "outcomes.clear_screen chars=312"}
+{"ts": 1788980801.436352, "level": "INFO", "logger": "cua", "event": "run.event", "step": 7, "step_id": "s7", "action": "click", "value": ""}
+{"ts": 1788980801.436683, "level": "INFO", "logger": "cua", "event": "surface.replay_step", "step_id": "s7", "action": "click", "frame": "main"}
+{"ts": 1788980801.474626, "level": "INFO", "logger": "cua", "event": "human.navigate", "url": "http://127.0.0.1:7878/open/ofac", "frame": "main"}
+{"ts": 1788980801.9734988, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980801.9742951, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980801.974601, "level": "DEBUG", "logger": "cua", "event": "surface.observe url=http://127.0.0.1:7878/console"}
+{"ts": 1788980826.035726, "level": "DEBUG", "logger": "cua", "event": "run.save_step index=7 bytes=27693"}
+{"ts": 1788980826.037208, "level": "DEBUG", "logger": "cua", "event": "outcomes.clear_screen chars=442"}
+{"ts": 1788980826.0374668, "level": "INFO", "logger": "cua", "event": "run.event", "step": 8, "step_id": "s8", "action": "click", "value": ""}
+{"ts": 1788980826.037824, "level": "INFO", "logger": "cua", "event": "surface.replay_step", "step_id": "s8", "action": "click", "frame": "main"}
+{"ts": 1788980826.074805, "level": "INFO", "logger": "cua", "event": "human.navigate", "url": "http://127.0.0.1:7878/open", "frame": "main"}
+{"ts": 1788980826.077964, "level": "INFO", "logger": "cua", "event": "human.navigate", "url": "http://127.0.0.1:7878/print/spool?t=HCU%20SPOOL%20%20HCU-CICS2%20%20CONF%20CUS-44191%20%20MEM%2077777%20%20NEW%2080-77777-02%20%20SAVINGS%20%20BAL%2025.00", "frame": "spool"}
+{"ts": 1788980826.5752609, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980826.577153, "level": "DEBUG", "logger": "cua", "event": "policy.allow url=http://127.0.0.1:7878/console"}
+{"ts": 1788980826.5775611, "level": "DEBUG", "logger": "cua", "event": "surface.observe url=http://127.0.0.1:7878/console"}
+{"ts": 1788980850.640235, "level": "DEBUG", "logger": "cua", "event": "run.save_step index=8 bytes=34980"}
+{"ts": 1788980850.642071, "level": "DEBUG", "logger": "cua", "event": "outcomes.clear_screen chars=467"}
+{"ts": 1788980850.6446888, "level": "INFO", "logger": "cua", "event": "replay.success", "outputs": {"member_name": "MARIA L SANTOS", "savings_balance": "640.12", "new_account_number": "80-77777-02", "confirmation_code": "CUS-44191"}}
+{"ts": 1788980850.6450062, "level": "INFO", "logger": "cua", "event": "run.finish", "status": "success", "outcome": "opened_subaccount", "step_id": "s8", "reason": "Checkpoint matched. Capability completed without the LLM."}
+{"ts": 1788980850.645477, "level": "INFO", "logger": "cua", "event": "cli.finish", "status": "success", "outcome": "opened_subaccount", "run_dir": "/Users/roshansaundankar/Desktop/interface ai take home/evidence/runs/replay-20260909T190448Z"}

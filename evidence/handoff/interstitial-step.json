@@ -1,0 +1,30 @@
+{
+  "step": {
+    "id": "s5",
+    "action": "click",
+    "frame": "main",
+    "locators": [
+      {
+        "by": "role",
+        "name": null,
+        "role": "button",
+        "accessible_name": "INQUIRE",
+        "text": null
+      },
+      {
+        "by": "text",
+        "name": null,
+        "role": null,
+        "accessible_name": null,
+        "text": "INQUIRE"
+      }
+    ],
+    "value_from": null,
+    "literal": "",
+    "key": "optional",
+    "wait_ms": null,
+    "notes": "I need to inquire about member 12345."
+  },
+  "url": "http://127.0.0.1:7878/console",
+  "screen": "\nFUNCTIONS\nMember Inquiry\nOpen Sub-Account\nBatch Reports\nWire Transfer\nReset Training Data\nLog Off\n\nPF5 Inquire\nPF9 Open\nClear Logoff\nHORIZON CU \u00a0 MEMBER SERVICING \u00a0 HCU-CICS2/PROD2 \u00a0 OP TELLER01 \u00a0 MEM -----\nHOST MESSAGE 12E\nCIF ADDRESS CHANGE PENDING FOR MEMBER 77777.\nReview is not complete. Continue only if you accept the current address of record.\n\n\n \u00a0 "
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from cua.log import log_event
 from cua.schema import Capability, Checkpoint, IOField, Locator, Step
 from cua.settings import ARTIFACT_DIR
 
@@ -73,6 +74,12 @@ def build_capability(
         IOField(name=key, description="Extracted from the confirmation/result screen")
         for key in outputs
     ]
+    log_event(
+        "artifact.build",
+        step_count=len(steps),
+        inputs=[field.name for field in inputs.values()],
+        outputs=list(outputs),
+    )
     return Capability(
         id="hcu-open-savings-subaccount",
         name="Open savings sub-account",
@@ -89,8 +96,10 @@ def save_capability(capability: Capability) -> Path:
     ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
     path = ARTIFACT_DIR / f"{capability.id}.json"
     path.write_text(capability.model_dump_json(indent=2), encoding="utf-8")
+    log_event("artifact.save", path=str(path), capability_id=capability.id)
     return path
 
 
 def load_capability(path: Path) -> Capability:
+    log_event("artifact.load", path=str(path))
     return Capability.model_validate(json.loads(path.read_text(encoding="utf-8")))

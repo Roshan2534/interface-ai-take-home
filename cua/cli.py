@@ -12,8 +12,9 @@ from urllib.request import urlopen
 
 from cua.agent import discover, replay, smoke
 from cua.artifact import load_capability
+from cua.log import log_event, setup_logging
 from cua.policy import origin
-from cua.settings import DEFAULT_GOAL, DEFAULT_TARGET, MOCK_SERVER
+from cua.settings import DEFAULT_GOAL, DEFAULT_TARGET, HANDOFF_MAX_ATTEMPTS, MOCK_SERVER
 from cua.surface import Surface, open_browser
 
 
@@ -29,15 +30,16 @@ def ensure_mock(target: str) -> subprocess.Popen | None:
         pass
     port = str(parsed.port or 7878)
     host = parsed.hostname or "127.0.0.1"
+    log_event("mock.starting", host=host, port=port)
     proc = subprocess.Popen(
         [sys.executable, str(MOCK_SERVER), "--host", host, "--port", port],
         stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
     )
     for _ in range(40):
         try:
             urlopen(health, timeout=0.4)
             print(f"Started mock host at {origin(target)}")
+            log_event("mock.ready", url=origin(target))
             return proc
         except (URLError, OSError, TimeoutError):
             time.sleep(0.15)
@@ -46,18 +48,42 @@ def ensure_mock(target: str) -> subprocess.Popen | None:
 
 
 def _run(args: argparse.Namespace) -> int:
+    setup_logging()
+    log_event(
+        "cli.start",
+        cmd=args.cmd,
+        target=args.target,
+        headed=args.headed,
+        handoff=getattr(args, "handoff", None),
+        handoff_max=getattr(args, "handoff_max", None),
+    )
     mock = ensure_mock(args.target)
     playwright = browser = None
     try:
         playwright, browser, page = open_browser(headed=args.headed)
         surface = Surface(page, allowed_origin=args.target)
         if args.cmd == "discover":
-            result = discover(args.goal, args.target, surface, provider=args.provider)
+            result = discover(
+                args.goal,
+                args.target,
+                surface,
+                provider=args.provider,
+                handoff_mode=args.handoff,
+                handoff_max=args.handoff_max,
+            )
         elif args.cmd == "smoke":
             result = smoke(args.goal, args.target, surface)
         else:
             capability = load_capability(Path(args.artifact))
-            result = replay(capability, args.target, dict(args.input or []), surface)
+            result = replay(
+                capability,
+                args.target,
+                dict(args.input or []),
+                surface,
+                handoff_mode=args.handoff,
+                handoff_max=args.handoff_max,
+            )
+        log_event("cli.finish", status=result.status, outcome=result.outcome, run_dir=result.run_dir)
         print(json.dumps(result.model_dump(), indent=2))
         return 0 if result.status in {"success", "business_outcome"} else 1
     finally:
@@ -83,6 +109,22 @@ def main(argv: list[str] | None = None) -> int:
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--target", default=DEFAULT_TARGET)
     common.add_argument("--headed", action="store_true", help="show the browser")
+    common.add_argument(
+        "--handoff",
+        choices=["off", "wait", "simulate"],
+        default=None,
+        help="HITL: wait (press Enter in the terminal to hand control back), simulate CONTINUE, or disable",
+    )
+    common.add_argument(
+        "--handoff-max",
+        type=int,
+        default=None,
+        metavar="N",
+        help=(
+            "Hand off at most N times; abort if the last return is still unknown "
+            f"(default {HANDOFF_MAX_ATTEMPTS}, or CUA_HANDOFF_MAX_ATTEMPTS)"
+        ),
+    )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     discover_p = sub.add_parser("discover", parents=[common], help="LLM-driven happy path")
@@ -109,6 +151,8 @@ def main(argv: list[str] | None = None) -> int:
     replay_p.add_argument("--input", action="append", type=_parse_input, default=[])
 
     args = parser.parse_args(argv)
+    if args.handoff_max is not None and args.handoff_max < 1:
+        parser.error("--handoff-max must be at least 1")
     return _run(args)
 
 

@@ -25,15 +25,24 @@ class RunLog:
         safe = redact_obj(payload)
         assert isinstance(safe, dict)
         self.events.append(safe)
+        from cua.log import log_event
+
+        log_event("run.event", **safe)
         with (self.dir / "events.jsonl").open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(safe) + "\n")
 
     def save_step(self, index: int, payload: dict[str, Any], screenshot: bytes | None) -> None:
+        from cua.log import LOGGER
+
         self._write(f"steps/{index:02d}.json", redact_obj(payload))
+        LOGGER.debug("run.save_step index=%s bytes=%s", index, len(screenshot or b""))
         if screenshot:
             (self.dir / "steps" / f"{index:02d}.png").write_bytes(screenshot)
 
     def finish(self, result: dict[str, Any]) -> None:
+        from cua.log import log_event
+
+        log_event("run.finish", **{k: result.get(k) for k in ("status", "outcome", "step_id", "reason")})
         self._write("result.json", redact_obj(result))
 
     def _write(self, rel: str, payload: Any) -> None:

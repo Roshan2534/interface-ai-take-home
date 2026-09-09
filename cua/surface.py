@@ -5,7 +5,8 @@ import re
 from typing import Any
 from playwright.sync_api import Frame, FrameLocator, Page, sync_playwright
 
-from cua.policy import assert_allowed
+from cua.log import LOGGER, log_event
+from cua.policy import assert_action, assert_allowed
 from cua.schema import AgentAction, Locator, Step
 
 TIMEOUT = 8000
@@ -18,11 +19,13 @@ class Surface:
         self.allowed_origin = allowed_origin
 
     def goto(self, url: str) -> None:
+        log_event("surface.goto", url=url)
         assert_allowed(url, self.allowed_origin)
         self.page.goto(url, wait_until="domcontentloaded")
 
     def observe(self) -> dict[str, Any]:
         assert_allowed(self.page.url, self.allowed_origin)
+        LOGGER.debug("surface.observe url=%s", self.page.url)
         frames = []
         for frame in self.page.frames:
             name = frame.name or ("root" if frame == self.page.main_frame else "")
@@ -46,6 +49,23 @@ class Surface:
 
     def act(self, action: AgentAction) -> None:
         assert_allowed(self.page.url, self.allowed_origin)
+        assert_action(action.action)
+        risky = (action.name or "").strip().upper() in {"SUBMIT OPEN"}
+        log_event(
+            "surface.act",
+            action=action.action,
+            frame=action.frame,
+            name=action.name,
+            field_name=action.field_name,
+            risky=risky,
+        )
+        if risky:
+            log_event(
+                "policy.risky_action",
+                name=action.name,
+                handling="allow_and_log",
+                note="Opening a share is irreversible; production would confirm or escalate.",
+            )
         if action.action == "wait":
             self.page.wait_for_timeout(max(action.wait_ms, 100))
             return
@@ -70,6 +90,7 @@ class Surface:
         self._settle()
 
     def replay_step(self, step: Step, value: str | None) -> None:
+        log_event("surface.replay_step", step_id=step.id, action=step.action, frame=step.frame)
         fake = AgentAction(
             action=step.action,  # type: ignore[arg-type]
             frame=step.frame,
@@ -99,6 +120,8 @@ class Surface:
                     return
                 except Exception as exc:
                     last_error = exc
+                    LOGGER.debug("locator_miss step=%s err=%s", step.id, exc)
+            log_event("surface.replay_failed", step_id=step.id, error=str(last_error))
             raise RuntimeError(f"Replay failed at {step.id}: {last_error}")
         self.act(fake)
 
@@ -226,8 +249,10 @@ def _text(frame: Page | Frame) -> str:
 
 
 def open_browser(headed: bool):
+    log_event("browser.launch", headed=headed, timeout_ms=TIMEOUT)
     playwright = sync_playwright().start()
     browser = playwright.chromium.launch(headless=not headed)
     page = browser.new_page(viewport={"width": 1100, "height": 800})
     page.set_default_timeout(TIMEOUT)
+    log_event("browser.ready", headed=headed)
     return playwright, browser, page

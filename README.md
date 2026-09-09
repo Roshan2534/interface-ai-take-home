@@ -54,6 +54,66 @@ python3 -m cua replay --headed --input member_id=99999
 
 Expected: stop after Inquire, `status=business_outcome`, `outcome=not_found`.
 
+4. Human-in-the-loop when the host shows a screen the artifact never recorded (member `77777`):
+
+```bash
+python3 -m cua replay --headed --handoff wait --input member_id=77777
+```
+
+See **Human intervention** below for what the terminal prints and how to hand control back to the agent.
+
+## Human intervention
+
+Use `--headed` so Chromium is visible. When the run hits a recoverable unknown screen (for example `HOST MESSAGE 12E` on member `77777`), automation **stops driving that same window**. It does not open a second browser or ask you to log in again.
+
+The terminal prints `HUMAN INTERVENTION REQUIRED` plus the reason, then how to resume:
+
+1. Finish the host step in the open Chromium window (for `77777`, click **CONTINUE** on the address-change interstitial).
+2. Return to the terminal.
+3. **Press Enter** to hand control back to the agent. Automation continues from the current screen.
+4. Type `abort` then Enter if the run should stop instead.
+
+Optional: open `http://127.0.0.1:7879/` and click **RESUME AUTOMATION** (or **ABORT RUN**). Same effect as the terminal.
+
+### Retry limit (customizable, default 2)
+
+If you press Enter without changing the screen, or you leave the host on a page this capability does not know, the agent **does not keep guessing**. It prints `STILL CANNOT PROCEED` with the current problem and hands the live window back to you again.
+
+Default: **2** handoffs. After you return control the second time and the screen is still unknown, the run aborts (`outcome=handoff_exhausted`).
+
+Set the limit:
+
+```bash
+python3 -m cua replay --headed --handoff wait --handoff-max 2 --input member_id=77777
+```
+
+Or in `.env` (CLI wins if both are set):
+
+```
+CUA_HANDOFF_MAX_ATTEMPTS=2
+```
+
+`--handoff-max` must be at least 1. Logged as `handoff.attempt`, `handoff.recheck`, `handoff.still_blocked`, `handoff.exhausted`.
+
+A CIF miss (`99999`) does **not** hand off. That is a known business outcome (`not_found`), not a human step.
+
+`--handoff off|wait|simulate` also works on discover (stuck loops / agent fail). Default mode is `wait` (`CUA_HANDOFF`). Headless `--handoff wait` still pauses, but you will not see the host UI unless you use `--headed`.
+
+Unattended evidence path (test operator clicks CONTINUE on the live page, no waiting):
+
+```bash
+python3 -m cua replay --handoff simulate --input member_id=77777
+```
+
+## Logging
+
+Every command writes stderr plus, once a run directory exists:
+
+- `evidence/runs/<kind>-<stamp>/system.log`
+- `evidence/runs/<kind>-<stamp>/system.jsonl`
+
+Events are named `module.verb` (`replay.start`, `handoff.start`, `surface.act`, `llm.request`, …). Secrets are redacted. Future work should keep calling `log_event()` from `cua.log` rather than `print`.
+
 ## Without live LLM / extra services
 
 Replay and smoke do not call an LLM. They still need the local mock (auto-started) and Chromium.
@@ -76,6 +136,7 @@ Curated pack (what to read in the repo):
 | `evidence/discovery/` | GPT-4o discovery run |
 | `evidence/replay/` | replay success, member `10001` |
 | `evidence/replay-not-found/` | replay CIF miss, member `99999` |
+| `evidence/handoff/` | replay HITL, member `77777`, `--handoff simulate` |
 
 Raw traces also land in `evidence/runs/` locally; that folder is gitignored.
 
