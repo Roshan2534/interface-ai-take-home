@@ -10,21 +10,21 @@
     {
       "name": "member_id",
       "type": "string",
-      "description": "Bound from discovery step 4",
+      "description": "Member number to look up on CIF",
       "required": true,
       "default": "12345"
     },
     {
       "name": "product",
       "type": "string",
-      "description": "Bound from discovery step 8",
+      "description": "Share product to open",
       "required": true,
       "default": "REGULAR SHARE - SAVINGS"
     },
     {
       "name": "deposit",
       "type": "string",
-      "description": "Bound from discovery step 9",
+      "description": "Opening deposit amount",
       "required": true,
       "default": "25.00"
     }

@@ -47,6 +47,8 @@ evidence/runs/
 !evidence/replay-not-found/**
 !evidence/handoff/
 !evidence/handoff/**
+!evidence/catalog/
+!evidence/catalog/**
 !evidence/demo/
 !evidence/demo/**
 evidence/demo/raw/

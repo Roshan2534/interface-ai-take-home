@@ -6,13 +6,19 @@ The system is a single Python process with two execution paths and one shared ho
 
 Discovery takes a natural-language goal and a target URL, opens Chromium through Playwright, and loops observe → LLM decide → act until the goal is met, a step limit is hit, or the agent fails. Replay loads a saved capability JSON, binds parameters, and executes the recorded steps with no model in the decision loop. Both paths use the same `Surface` (frames, locators, clicks, fills) and the same policy checks. That split is the product claim: the model discovers; the artifact is the reusable capability; production invokes replay.
 
-I implemented against a local mock core, Horizon Credit Union, instead of a public demo site. The brief asked for a proxy that exercises a multi-step servicing flow on a hostile UI. A local frameset (menu / banner / main), table layout, and no test IDs matches that environment, stays off the open web, and makes error states deterministic (CIF miss, permission deny, OFAC, address-change interstitial, timeout). The CLI starts the mock if `/health` is down so a reviewer does not need a second terminal.
+The loop is one JSON action per turn, parsed into `AgentAction`. The model sees the goal, per-frame controls and visible text, and a JPEG. It does not get a tool-calling API for clicks. I wanted a contract I could validate and record, not free-form computer-use. `thought` is for the log. `bind` marks values that become inputs. `done` has to carry outputs and checkpoint text. Python is the runtime because Playwright’s sync API and Pydantic fit that loop in one process without a queue.
+
+I implemented against a local mock core, Horizon Credit Union, instead of a public demo site. The brief asked for a proxy that exercises a multi-step servicing flow on a hostile UI. A local frameset (menu / banner / main), table layout, and no test IDs matches that environment, stays off the open web, and makes error states deterministic (CIF miss, permission deny, OFAC, address-change interstitial, timeout). The CLI starts the mock if `/health` is down, so you do not need a second terminal.
 
 Playwright was the computer-use mechanism, not screenshot-plus-coordinates. Coordinates drift; `name`, role, and visible text survive the kind of markup banks actually ship. Observation for the LLM is controls plus visible text plus a JPEG. An accessibility snapshot of every frameset pane costs tens of seconds per step on this host, so it is not collected. Replay does not observe at all: it reads visible text, classifies the screen, and screenshots only on a stop, a handoff, or the last step.
 
-The process is intentionally small. There is no queue, no capability catalog service, and no cluster. A CLI is enough to show the contract an agent would call. `--headed` and `record-demo` pause and outline the control so a person can see the click; headless replay without `--record` stays fast.
+The process is intentionally small. There is no queue and no cluster. Saved artifacts live in `evidence/artifacts/`. `python3 -m cua catalog` lists them; `python3 -m cua tools` emits the function-calling schema; `python3 -m cua invoke --name … --input member_id=10001` binds the typed args and runs replay. `python3 -m cua serve` is the same contract over HTTP (`GET /v1/tools`, `POST /v1/invoke`). `--headed` and `record-demo` pause and outline the control so a person can see the click; headless replay without `--record` stays fast.
 
-LLM vendors are pluggable (`openai`, `anthropic`/`claude`, `gemini`). Defaults are the current models: `gpt-6-astra`, `claude-sonnet-5`, `gemini-3.8-flash`. I ran discovery end to end against the live mock with OpenAI `gpt-6-astra`; it signed on, inquired member `12345`, opened the share, and returned Jane Okonkwo, savings `4,250.18`, new account `80-12345-03`, confirmation `CUS-44191`. That class of model is more than this loop needs. Discovery here is a short, structured JSON act cycle on a known form, not long-horizon research. Cost-efficient defaults that still fit are `gpt-5.6-luna`, `claude-haiku-4-5`, and `gemini-3.8-flash` (Gemini’s latest Flash is already the cheap workhorse). `LLM_MODEL` overrides any of these.
+Replay lives in `cua/replay.py`. It does not import `cua/llm.py` or a vendor SDK. Only `discover` loads a model. `python3 -m cua prove-replay` walks that import graph, then runs members `10001`, `99999`, and `77777` on the committed artifact with no API key.
+
+The three wired vendors are OpenAI, Anthropic (Claude), and Gemini. You pick the vendor with an API key, `LLM_PROVIDER`, or `--provider`. Each vendor has a default model: `gpt-6-astra`, `claude-sonnet-5`, `gemini-3.8-flash`. `LLM_MODEL` only changes that model name on the vendor you already picked. It does not pick a vendor, and it does not require a code change.
+
+OpenAI example: this repo’s default is `gpt-6-astra`. Discovery, the committed artifact, the evidence packs, and the demo were all that Astra run (Jane Okonkwo, savings `4,250.18`, new account `80-12345-03`, confirmation `CUS-44191`). To run the same code on `gpt-5.6-luna` instead, put `LLM_MODEL=gpt-5.6-luna` in `.env` and keep the OpenAI key. Same client, same `--provider openai`, different model id. Claude and Gemini work the same way (`claude-haiku-4-5` on Anthropic, another Gemini id on Gemini). Astra is more than this JSON click loop needs; Luna or Haiku is the cheaper fit. A fourth company (not those three) would need a new client in code.
 
 ## Artifact schema
 
@@ -20,11 +26,11 @@ The artifact is a versioned Pydantic document, not a chat transcript. A calling 
 
 A capability has `id`, `name`, `version`, `description` (the original goal), `surface` (`web` today), `entry` URL, typed `inputs`, typed `outputs`, ordered `steps`, and a `checkpoint` (frame plus required visible strings). Each step has an action (`click` / `fill` / `select` / `press` / `wait`), a frame name, an ordered locator list, and a value source.
 
-Locators are tried in order: HTML `name` first (OPID, MEMNO, DEPAMT are stable on this host), then role plus accessible name, then visible text. Discovery also stores a `value_from` of `secret:…`, `input:…`, or a literal. Secrets never land in the JSON as plaintext; replay pulls them from env. Bound inputs become the agent-facing parameters. The committed Astra artifact has ten steps: sign-on, inquire, open, OFAC Continue, then a bound `product` select and `deposit` fill before SUBMIT OPEN. The checkpoint is `SUB-ACCOUNT OPENED` in frame `main`, not “the last click returned 200.”
+Locators are tried in order: HTML `name` first (OPID, MEMNO, DEPAMT are stable on this host), then role plus accessible name, then visible text. Discovery also stores a `value_from` of `secret:…`, `input:…`, or a literal. Secrets never land in the JSON as plaintext; replay pulls them from env. Bound inputs become the agent-facing parameters. `cua/catalog.py` turns those fields into a JSON-schema function tool named with the capability id. Unknown keys are rejected; omitted keys take the recorded default (`product` and `deposit` stay `REGULAR SHARE` / `25.00` unless the caller overrides them). The committed Astra artifact has ten steps: sign-on, inquire, open, OFAC Continue, then a bound `product` select and `deposit` fill before SUBMIT OPEN. The checkpoint is `SUB-ACCOUNT OPENED` in frame `main`, not “the last click returned 200.”
 
 I kept the schema web-shaped but frame-aware rather than inventing a fully abstract “control graph.” The brief said implement one surface and not paint the design into a corner. `frame` plus locator-by-name/role is the seam: a desktop adapter would resolve the same step against an accessibility tree instead of a DOM, without changing inputs, outputs, or checkpoint.
 
-The committed artifact is the reviewed happy-path recording. Discovery can emit a new one; we do not treat the LLM transcript as the capability.
+The committed artifact is the reviewed happy-path recording from that Astra discovery. Discovery can emit a new one; we do not treat the LLM transcript as the capability.
 
 ## Determinism & error handling
 
@@ -34,9 +40,11 @@ The result contract has three statuses: `success` (checkpoint matched, outputs f
 
 Locators wait for visibility with a short timeout and fall through the list. Fill/select refuse to target a label cell (`<td>OPERATOR ID</td>`). Submit buttons match on alphanumeric name so `OPEN SUB ACCOUNT` still hits `OPEN SUB-ACCOUNT`. Those rules exist because the LLM names controls the way a teller reads them, not the way the HTML is spelled.
 
+UI drift is secondary here, which matches the brief: this class of host does not restyle every week. I did not pin CSS paths or test IDs. If a tenant rename breaks INQUIRE, locators miss, the run stops with step and screenshot, and you patch or re-discover. Hyphen/label matching is the small markup-spelling case, not a general drift engine.
+
 I did not build a general wait-for-network-idle strategy. This host is local and fast. Slow/failed load would surface as a locator timeout or a classified timeout screen, which is enough for the slice.
 
-Evidence covers success (`10001`), CIF miss (`99999`), and HITL (`77777`). Classifiers for permission, validation, and timeout are in code against the mock; I did not ship extra packs for every branch.
+Evidence covers success (`10001`), CIF miss (`99999`), and HITL (`77777`), plus the paced demo video. All of those packs are replays of the Astra artifact, not a second vendor’s recording. Classifiers for permission, validation, and timeout are in code against the mock; I did not ship extra packs for every branch.
 
 ## Heterogeneity & multi-tenant
 
@@ -68,6 +76,8 @@ Secrets: operator password is `secret:password`, redacted in logs and artifacts.
 
 ## Cuts
 
-I did not build stretch goals (capability catalog API, codegen, approval states, bounded LLM repair, cross-tenant canonicalization, N-run stability). The operator desk is a stub. There are no automated tests. Evidence does not include a dedicated pack for every classified error. Desktop and multi-tenant overlays are design only.
+I built one stretch: the agent-facing catalog. Codegen, approval states, bounded LLM repair, cross-tenant canonicalization, and N-run stability are not in this repo. The core already had discovery, replay, error classes, and HITL; a second stretch would have been thinner copies of the same idea. The operator desk is a stub because the real handoff is the paused Chromium window and the terminal, which the brief allows. Evidence does not include a dedicated pack for every classified error; permission, validation, and timeout are in `cua/outcomes.py` against the mock. Desktop and multi-tenant overlays are design only.
 
-Next, in order: a tiny locator unit test around hyphen/label matching, then an agent-facing `invoke(capability_id, inputs)` function so the artifact is callable by name, then a second mock tenant with a CSS restyle to prove the overlay story.
+The catalog does not invent a second executor. List and tools are JSON over the saved artifacts. Invoke is replay, with argument checks first. `python3 tests/test_catalog.py` covers list, schema, bind, and the HTTP 400/404 paths. `evidence/catalog/` is one live `invoke` of `hcu-open-savings-subaccount` with `member_id=10001`.
+
+Next, with more time: a locator unit test for hyphen/label matching, evidence packs for permission / validation / timeout, then a second mock tenant with a CSS restyle so the overlay story is a run, not only a write-up. The operator desk would stay a resume/abort page until that overlay exists. I would not add a second executor.

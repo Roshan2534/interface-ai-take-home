@@ -1,0 +1,33 @@
+{
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "hcu-open-savings-subaccount",
+        "description": "Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "member_id": {
+              "type": "string",
+              "description": "Member number to look up on CIF",
+              "default": "12345"
+            },
+            "product": {
+              "type": "string",
+              "description": "Share product to open",
+              "default": "REGULAR SHARE - SAVINGS"
+            },
+            "deposit": {
+              "type": "string",
+              "description": "Opening deposit amount",
+              "default": "25.00"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    }
+  ]
+}

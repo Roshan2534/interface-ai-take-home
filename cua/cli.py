@@ -11,8 +11,8 @@ from urllib.error import URLError
 from urllib.parse import urljoin, urlparse
 from urllib.request import urlopen
 
-from cua.agent import discover, replay, smoke
 from cua.artifact import load_capability
+from cua.replay import replay, smoke
 from cua.log import log_event, setup_logging
 from cua.policy import origin
 from cua.settings import (
@@ -84,6 +84,8 @@ def _run(args: argparse.Namespace) -> int:
             dwell_ms=dwell_ms,
         )
         if args.cmd == "discover":
+            from cua.agent import discover
+
             result = discover(
                 args.goal,
                 args.target,
@@ -94,6 +96,10 @@ def _run(args: argparse.Namespace) -> int:
             )
             code = 0 if result.status in {"success", "business_outcome"} else 1
             print(json.dumps(result.model_dump(), indent=2))
+        elif args.cmd == "prove-replay":
+            result = _record_demo(surface, args.target)
+            code = 0 if result.get("ok") else 1
+            print(json.dumps(result, indent=2))
         elif args.cmd == "smoke":
             result = smoke(args.goal, args.target, surface)
             code = 0 if result.status in {"success", "business_outcome"} else 1
@@ -102,6 +108,34 @@ def _run(args: argparse.Namespace) -> int:
             result = _record_demo(surface, args.target)
             code = 0 if result.get("ok") else 1
             print(json.dumps(result, indent=2))
+        elif args.cmd == "invoke":
+            from cua.catalog import invocation_payload
+
+            result = replay(
+                args.capability,
+                args.target,
+                args.bound,
+                surface,
+                handoff_mode=args.handoff,
+                handoff_max=args.handoff_max,
+            )
+            envelope = invocation_payload(
+                args.capability,
+                args.artifact_path,
+                args.name,
+                dict(args.input or []),
+                args.bound,
+                result,
+            )
+            code = 0 if result.status in {"success", "business_outcome"} else 1
+            print(json.dumps(envelope, indent=2))
+            log_event(
+                "cli.finish",
+                status=result.status,
+                outcome=result.outcome,
+                run_dir=result.run_dir,
+                via="invoke",
+            )
         else:
             capability = load_capability(Path(args.artifact))
             result = replay(
@@ -251,10 +285,100 @@ def main(argv: list[str] | None = None) -> int:
         parents=[common],
         help="record one video: replay 10001, 99999 not-found, 77777 HITL simulate",
     )
+    prove_p = sub.add_parser(
+        "prove-replay",
+        parents=[common],
+        help="prove replay has no LLM, then run 10001 / 99999 / 77777 with no API key",
+    )
+    prove_p.add_argument(
+        "--imports-only",
+        action="store_true",
+        help="only check that cua.replay cannot import a model client",
+    )
+
+    sub.add_parser(
+        "catalog",
+        help="list saved capabilities (id, typed inputs/outputs, no steps)",
+    )
+    sub.add_parser(
+        "tools",
+        help="emit OpenAI-style function tools for every saved capability",
+    )
+    invoke_p = sub.add_parser(
+        "invoke",
+        parents=[common],
+        help="look up a capability by name and replay it with typed args",
+    )
+    invoke_p.add_argument(
+        "--name",
+        default="hcu-open-savings-subaccount",
+        help="capability id or name from the catalog",
+    )
+    invoke_p.add_argument("--input", action="append", type=_parse_input, default=[])
+    serve_p = sub.add_parser(
+        "serve",
+        parents=[common],
+        help="HTTP catalog: GET /v1/tools, POST /v1/invoke",
+    )
+    serve_p.add_argument("--host", default="127.0.0.1")
+    serve_p.add_argument("--port", type=int, default=7880)
 
     args = parser.parse_args(argv)
-    if args.handoff_max is not None and args.handoff_max < 1:
+    if getattr(args, "handoff_max", None) is not None and args.handoff_max < 1:
         parser.error("--handoff-max must be at least 1")
+    if args.cmd == "catalog":
+        from cua.catalog import list_catalog
+
+        setup_logging()
+        print(json.dumps({"capabilities": list_catalog()}, indent=2))
+        return 0
+    if args.cmd == "tools":
+        from cua.catalog import tool_specs
+
+        setup_logging()
+        print(json.dumps({"tools": tool_specs()}, indent=2))
+        return 0
+    if args.cmd == "invoke":
+        from cua.catalog import CatalogError, bind_arguments, error_payload, get_capability
+
+        setup_logging()
+        try:
+            capability, path = get_capability(args.name)
+            args.capability = capability
+            args.artifact_path = path
+            args.bound = bind_arguments(capability, dict(args.input or []))
+            log_event("catalog.invoke", capability_id=capability.id, via="cli")
+        except CatalogError as exc:
+            print(json.dumps(error_payload(exc), indent=2))
+            return 2
+    if args.cmd == "serve":
+        from cua.serve import serve
+
+        setup_logging()
+        mock = ensure_mock(args.target)
+        try:
+            serve(
+                args.host,
+                args.port,
+                target=args.target,
+                headed=args.headed,
+                handoff=args.handoff,
+                handoff_max=args.handoff_max,
+            )
+        finally:
+            if mock:
+                mock.terminate()
+        return 0
+    if args.cmd == "prove-replay":
+        from cua.prove import check_replay_imports
+
+        proof = check_replay_imports()
+        print(json.dumps({"import_proof": proof}, indent=2), flush=True)
+        if not proof["ok"]:
+            return 1
+        if getattr(args, "imports_only", False):
+            print("Replay import graph has no model client.", flush=True)
+            return 0
     return _run(args)
 
 

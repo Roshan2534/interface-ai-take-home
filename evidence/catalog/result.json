@@ -1,0 +1,46 @@
+{
+  "call": {
+    "name": "hcu-open-savings-subaccount",
+    "arguments": {
+      "member_id": "10001"
+    }
+  },
+  "bound": {
+    "member_id": "10001",
+    "product": "REGULAR SHARE - SAVINGS",
+    "deposit": "25.00"
+  },
+  "capability": {
+    "id": "hcu-open-savings-subaccount",
+    "name": "Open savings sub-account",
+    "version": 1,
+    "artifact_path": "evidence/artifacts/hcu-open-savings-subaccount.json"
+  },
+  "result": {
+    "status": "success",
+    "outcome": "opened_subaccount",
+    "goal": "Sign on to the member servicing console. Look up member 12345, read the current savings balance, open a new REGULAR SHARE sub-account with an opening deposit of 25.00, and return the member name, savings balance, new account number, and confirmation code.",
+    "target": "http://127.0.0.1:7878/",
+    "inputs": {
+      "member_id": "10001",
+      "product": "REGULAR SHARE - SAVINGS",
+      "deposit": "25.00"
+    },
+    "outputs": {
+      "member_name": "ROBERT M CHEN",
+      "savings_balance": "1,200.00",
+      "new_account_number": "80-10001-03",
+      "confirmation_code": "CUS-44191",
+      "product": "REGULAR SHARE / SAVINGS",
+      "opening_deposit": "25.00"
+    },
+    "error": null,
+    "step_id": "s10",
+    "expected": "SUB-ACCOUNT OPENED",
+    "observed": "FUNCTIONS Member Inquiry Open Sub-Account Wire Transfer GL Override Reset Training Data Log Off PF5 Inquire PF9 Open Clear Logoff HORIZON CU MEMBER SERVICING HCU-CICS2/PROD2 OP TELLER01 MEM ----- SUB-ACCOUNT OPENED MEMBER 10001 ROBERT M CHEN NEW ACCT 80-10001-03 PRODUCT REGULAR SHARE / SAVINGS OPENING BAL 25.00 SAVINGS BAL 1,200.00 CONFIRMATION CUS-44191 HOST PRINT PREVIEW New inquiry HCU SPOOL HC",
+    "reason": "Checkpoint matched. Capability completed without the LLM.",
+    "steps": 10,
+    "artifact_path": "evidence/artifacts/hcu-open-savings-subaccount.json",
+    "run_dir": "evidence/runs/replay-20260909T234446Z"
+  }
+}
